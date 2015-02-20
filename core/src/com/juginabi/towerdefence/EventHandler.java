@@ -3,18 +3,31 @@ package com.juginabi.towerdefence;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Vector2;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Jukka on 20.2.2015.
  */
 public class EventHandler implements InputProcessor {
+    // Keyboard
     boolean keyUP       = false;
     boolean keyDOWN     = false;
     boolean keyLEFT     = false;
     boolean keyRIGHT    = false;
 
+    // Mouse and touch input
+    Map<Integer, CursorStatus> cursorStatusMap = null;
+
     EventHandler() {
+        cursorStatusMap = new HashMap<Integer, CursorStatus>();
         Gdx.input.setInputProcessor(this);
+    }
+
+    public Map<Integer, CursorStatus> getCursorStatus() {
+        return cursorStatusMap;
     }
 
     public boolean isKeyPressed(int keycode) {
@@ -91,17 +104,45 @@ public class EventHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        if (cursorStatusMap.get(pointer) == null)
+            cursorStatusMap.put(pointer, new CursorStatus());
+        switch (button) {
+            case Input.Buttons.LEFT:
+                cursorStatusMap.get(pointer).setMouseButton(button, true);
+                cursorStatusMap.get(pointer).setPosition(screenX, screenY);
+                cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
+                break;
+            case Input.Buttons.RIGHT:
+                cursorStatusMap.get(pointer).setMouseButton(button, true);
+                cursorStatusMap.get(pointer).setPosition(screenX, screenY);
+                cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
+                break;
+        }
+        return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
+        switch (button) {
+            case Input.Buttons.LEFT:
+                cursorStatusMap.get(pointer).setMouseButton(button, false);
+                cursorStatusMap.get(pointer).setPosition(screenX, screenY);
+                cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
+                break;
+            case Input.Buttons.RIGHT:
+                cursorStatusMap.get(pointer).setMouseButton(button, false);
+                cursorStatusMap.get(pointer).setPosition(screenX, screenY);
+                cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
+                break;
+        }
+        return true;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
+        cursorStatusMap.get(pointer).setPosition(screenX, screenY);
+        cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
+        return true;
     }
 
     @Override
@@ -113,4 +154,61 @@ public class EventHandler implements InputProcessor {
     public boolean scrolled(int amount) {
         return false;
     }
+
+    public class CursorStatus {
+        private Vector2 position = null;
+        private boolean buttonLEFT  = false;
+        private boolean buttonRIGHT = false;
+        private long timeSinceUpdate = 0;
+
+        CursorStatus() {
+            this.position = new Vector2(0,0);
+            this.buttonLEFT = false;
+            this.buttonRIGHT = false;
+            timeSinceUpdate = System.currentTimeMillis();
+        }
+
+        CursorStatus(int x, int y, boolean left, boolean right) {
+            this.position = new Vector2(x,y);
+            this.buttonLEFT = left;
+            this.buttonRIGHT = right;
+        }
+
+        public boolean getMouseLeft() {
+            return this.buttonLEFT;
+        }
+
+        public boolean getMouseRight() {
+            return this.buttonRIGHT;
+        }
+
+        public Vector2 getPosition() {
+            return this.position;
+        }
+
+        public long getTimeSinceUpdate() {
+            return this.timeSinceUpdate;
+        }
+
+        public void setPosition(int x, int y) {
+            this.position.x = x;
+            this.position.y = y;
+        }
+
+        public void setTimeSinceUpdate(long time) {
+            this.timeSinceUpdate = time;
+        }
+
+        public void setMouseButton(int keycode, boolean status) {
+            switch (keycode) {
+                case Input.Buttons.LEFT:
+                    this.buttonLEFT = status;
+                    break;
+                case Input.Buttons.RIGHT:
+                    this.buttonRIGHT = status;
+                    break;
+            }
+        }
+    }
+
 }

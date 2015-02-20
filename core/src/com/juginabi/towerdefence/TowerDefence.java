@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Map;
+
 public class TowerDefence extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
@@ -22,7 +24,7 @@ public class TowerDefence extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		img = new Texture("smiley.png");
         sprite = new Sprite(img);
-        sprite.setSize(64f, 64f);
+        //sprite.setSize(64f, 64f);
         sprite.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
         sprite.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
@@ -31,7 +33,7 @@ public class TowerDefence extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0.5f, 0.33f, 0.75f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Move sprite
@@ -43,10 +45,17 @@ public class TowerDefence extends ApplicationAdapter {
             sprite.translateY(2f);
         if (event.isKeyPressed(Input.Keys.S) || event.isKeyPressed(Input.Keys.DOWN))
             sprite.translateY(-2f);
+        Map<Integer, EventHandler.CursorStatus> cursorStatus =  event.getCursorStatus();
 
         // Render sprite
         batch.begin();
-        sprite.draw(batch);
+        for (int i = 0; i < cursorStatus.size(); ++i) {
+            EventHandler.CursorStatus status = cursorStatus.get(i);
+            if ((System.currentTimeMillis() - status.getTimeSinceUpdate()) < 5000) {
+                sprite.setPosition(status.getPosition().x - sprite.getWidth() / 2, (Gdx.graphics.getHeight() - status.getPosition().y));
+                sprite.draw(batch);
+            }
+        }
 		batch.end();
 	}
 
