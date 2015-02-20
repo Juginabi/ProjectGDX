@@ -7,6 +7,7 @@ import com.juginabi.towerdefence.TowerDefence;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.title = "TowerDefence demo";
 		new LwjglApplication(new TowerDefence(), config);
 	}
 }
