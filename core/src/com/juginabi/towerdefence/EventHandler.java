@@ -108,6 +108,7 @@ public class EventHandler implements InputProcessor {
             cursorStatusMap.put(pointer, new CursorStatus());
         switch (button) {
             case Input.Buttons.LEFT:
+                // Button left is also same as touch on Android
                 cursorStatusMap.get(pointer).setMouseButton(button, true);
                 cursorStatusMap.get(pointer).setPosition(screenX, screenY);
                 cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
@@ -155,6 +156,10 @@ public class EventHandler implements InputProcessor {
         return false;
     }
 
+
+    /**
+     * Encapsulates all cursory actions like mouse and touch
+     */
     public class CursorStatus {
         private Vector2 position = null;
         private boolean buttonLEFT  = false;
@@ -174,18 +179,34 @@ public class EventHandler implements InputProcessor {
             this.buttonRIGHT = right;
         }
 
+        /**
+         * See if button left is pressed. On android this indicates touch.
+         * @return Boolean if buttonLeft (on desktop) or touch (on Android) is active.
+         */
         public boolean getMouseLeft() {
             return this.buttonLEFT;
         }
 
+        /**
+         * See if button right is pressed.
+         * @return Boolean if buttonRight (on desktop) is active.
+         */
         public boolean getMouseRight() {
             return this.buttonRIGHT;
         }
 
+        /**
+         * Get position of this cursor.
+         * @return Gdx.Math.Vector2 position
+         */
         public Vector2 getPosition() {
             return this.position;
         }
 
+        /**
+         * Get time of last update of this cursor
+         * @return System.currentTimeInMillis when button or touch press/drag/release activity last happened
+         */
         public long getTimeSinceUpdate() {
             return this.timeSinceUpdate;
         }
@@ -210,5 +231,4 @@ public class EventHandler implements InputProcessor {
             }
         }
     }
-
 }
