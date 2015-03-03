@@ -5,12 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -18,13 +16,13 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.juginabi.towerdefence.attackers.GOAttacker;
+import com.juginabi.towerdefence.attackers.PencilNeckedGeek;
 
 public class TowerDefence extends ApplicationAdapter {
     // Tag of this app
@@ -47,12 +45,14 @@ public class TowerDefence extends ApplicationAdapter {
     TiledMapTileLayer BUILD_LAYER;
     TiledMapTileLayer TOP_LAYER;
     TiledMapTileLayer OBJECTIVE_LAYER;
-    TiledMapRenderer renderer;
+    OrthogonalTiledMapRenderer renderer;
 
     final int TILE_WIDTH = 64;
     final int TILE_HEIGHT = 64;
     final int MAP_WIDTH = 32;
     final int MAP_HEIGHT = 18;
+
+    PencilNeckedGeek geek;
 
     // Handles all input events
     EventHandler event = null;
@@ -82,7 +82,9 @@ public class TowerDefence extends ApplicationAdapter {
         TOP_LAYER = (TiledMapTileLayer) map.getLayers().get("TOP_LAYER");
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
+        batch = new SpriteBatch();
         tex = new Texture("tankBlack.png");
+        geek = new PencilNeckedGeek();
 
         event = new EventHandler();
 	}
@@ -118,6 +120,11 @@ public class TowerDefence extends ApplicationAdapter {
             Ray pickRay = cam.getPickRay(Gdx.input.getX(), Gdx.input.getY());
             Intersector.intersectRayPlane(pickRay, intersectPlane, intersectPos);
 
+            int xx, yy;
+            xx = Gdx.input.getX();
+            yy = Gdx.input.getY();
+            final Vector3 vector3 = cam.unproject(new Vector3(xx, yy, 0));
+
             int x = (int)intersectPos.x / 64;
             int y = (int)intersectPos.y / 64;
 
@@ -144,7 +151,16 @@ public class TowerDefence extends ApplicationAdapter {
 
         cam.update();
         renderer.setView(cam);
+
+        geek.Update(Gdx.graphics.getDeltaTime());
+        //geek.Draw(batch);
+        //TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+        //TextureRegion textureRegion = new TextureRegion(new Texture("smiley.png"),64,64);
+        //StaticTiledMapTile tile = new StaticTiledMapTile(textureRegion);
+        //cell.setTile(tile);
+        //BUILD_LAYER.setCell(geek.GetLocation().x,geek.GetLocation().y, cell);
         renderer.render();
+
 
         EventHandler.CursorStatus status = event.getCursorStatus().get(0);
         if (status.getMouseLeft() == false)
@@ -158,6 +174,8 @@ public class TowerDefence extends ApplicationAdapter {
         // Dispose all the assets here and recreate
         Gdx.app.log(TAG, "resize event!");
         viewport.update(width,height);
+        batch.dispose();
+        batch = new SpriteBatch();
     }
 
     @Override
