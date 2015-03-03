@@ -23,6 +23,8 @@ public class EventHandler implements InputProcessor {
 
     EventHandler() {
         cursorStatusMap = new HashMap<Integer, CursorStatus>();
+        cursorStatusMap.put(0, new CursorStatus());
+        cursorStatusMap.put(1, new CursorStatus());
         Gdx.input.setInputProcessor(this);
     }
 
@@ -104,8 +106,8 @@ public class EventHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (cursorStatusMap.get(pointer) == null)
-            cursorStatusMap.put(pointer, new CursorStatus());
+        if (pointer > 1)
+            return false;
         switch (button) {
             case Input.Buttons.LEFT:
                 // Button left is also same as touch on Android
@@ -119,11 +121,13 @@ public class EventHandler implements InputProcessor {
                 cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (pointer > 1)
+            return false;
         switch (button) {
             case Input.Buttons.LEFT:
                 cursorStatusMap.get(pointer).setMouseButton(button, false);
@@ -136,14 +140,16 @@ public class EventHandler implements InputProcessor {
                 cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (pointer > 1)
+            return false;
         cursorStatusMap.get(pointer).setPosition(screenX, screenY);
         cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
-        return true;
+        return false;
     }
 
     @Override
@@ -162,21 +168,25 @@ public class EventHandler implements InputProcessor {
      */
     public class CursorStatus {
         private Vector2 position = null;
+        private Vector2 previousPos = null;
         private boolean buttonLEFT  = false;
         private boolean buttonRIGHT = false;
         private long timeSinceUpdate = 0;
 
         CursorStatus() {
             this.position = new Vector2(0,0);
+            this.previousPos = new Vector2(0,0);
             this.buttonLEFT = false;
             this.buttonRIGHT = false;
-            timeSinceUpdate = System.currentTimeMillis();
+            timeSinceUpdate = 0;
         }
 
         CursorStatus(int x, int y, boolean left, boolean right) {
             this.position = new Vector2(x,y);
+            this.previousPos = new Vector2(0,0);
             this.buttonLEFT = left;
             this.buttonRIGHT = right;
+            timeSinceUpdate = System.currentTimeMillis();
         }
 
         /**
@@ -203,6 +213,10 @@ public class EventHandler implements InputProcessor {
             return this.position;
         }
 
+        public Vector2 getDeltaPosition() {
+            return new Vector2(position.x - previousPos.x, position.y - previousPos.y);
+        }
+
         /**
          * Get time of last update of this cursor
          * @return System.currentTimeInMillis when button or touch press/drag/release activity last happened
@@ -212,6 +226,8 @@ public class EventHandler implements InputProcessor {
         }
 
         public void setPosition(int x, int y) {
+            this.previousPos.x = this.position.x;
+            this.previousPos.y = this.position.y;
             this.position.x = x;
             this.position.y = y;
         }
