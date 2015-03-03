@@ -70,7 +70,7 @@ public class EventHandler implements InputProcessor {
                 this.keyRIGHT = true;
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class EventHandler implements InputProcessor {
                 this.keyRIGHT = false;
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class EventHandler implements InputProcessor {
                 cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -136,14 +136,14 @@ public class EventHandler implements InputProcessor {
                 cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         cursorStatusMap.get(pointer).setPosition(screenX, screenY);
         cursorStatusMap.get(pointer).setTimeSinceUpdate(System.currentTimeMillis());
-        return true;
+        return false;
     }
 
     @Override
