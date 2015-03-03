@@ -72,7 +72,7 @@ public class EventHandler implements InputProcessor {
                 this.keyRIGHT = true;
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class EventHandler implements InputProcessor {
                 this.keyRIGHT = false;
                 break;
         }
-        return true;
+        return false;
     }
 
     @Override
