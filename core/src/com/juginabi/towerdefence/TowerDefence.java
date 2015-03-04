@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -21,8 +20,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.juginabi.towerdefence.attackers.GOAttacker;
-import com.juginabi.towerdefence.attackers.PencilNeckedGeek;
+import com.juginabi.towerdefence.GameEntities.PencilNeckedGeek;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TowerDefence extends ApplicationAdapter {
     // Tag of this app
@@ -52,7 +53,7 @@ public class TowerDefence extends ApplicationAdapter {
     final int MAP_WIDTH = 32;
     final int MAP_HEIGHT = 18;
 
-    PencilNeckedGeek geek;
+    List<PencilNeckedGeek> geeks;
 
     // Handles all input events
     EventHandler event = null;
@@ -84,7 +85,13 @@ public class TowerDefence extends ApplicationAdapter {
 
         batch = new SpriteBatch();
         tex = new Texture("tankBlack.png");
-        geek = new PencilNeckedGeek();
+        geeks = new ArrayList<PencilNeckedGeek>();
+        for (int i = 0; i < 100; ++i) {
+            PencilNeckedGeek geek = new PencilNeckedGeek(new Texture("smiley.png"));
+            geek.setPosition(4 * TILE_HEIGHT, 17 * TILE_WIDTH);
+            geek.setVelocity((float)Math.random() * 150 + 64);
+            geeks.add(geek);
+        }
 
         event = new EventHandler();
 	}
@@ -151,16 +158,13 @@ public class TowerDefence extends ApplicationAdapter {
 
         cam.update();
         renderer.setView(cam);
-
-        geek.Update(Gdx.graphics.getDeltaTime());
-        //geek.Draw(batch);
-        //TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        //TextureRegion textureRegion = new TextureRegion(new Texture("smiley.png"),64,64);
-        //StaticTiledMapTile tile = new StaticTiledMapTile(textureRegion);
-        //cell.setTile(tile);
-        //BUILD_LAYER.setCell(geek.GetLocation().x,geek.GetLocation().y, cell);
         renderer.render();
-
+        renderer.getBatch().begin();
+        for (PencilNeckedGeek geek : geeks) {
+            geek.Update(Gdx.graphics.getDeltaTime());
+            geek.draw(renderer.getBatch());
+        }
+        renderer.getBatch().end();
 
         EventHandler.CursorStatus status = event.getCursorStatus().get(0);
         if (status.getMouseLeft() == false)

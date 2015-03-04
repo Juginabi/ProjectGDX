@@ -1,18 +1,19 @@
-package com.juginabi.towerdefence.attackers;
+package com.juginabi.towerdefence.GameEntities;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by Jukka on 3.3.2015.
  */
-public abstract class GOAttacker {
-    private Vector2 tilePosition_;
+public abstract class DynamicEntity extends Sprite {
     private Vector2 heading_;
     private float velocity_;
     private float hitPoints_;
 
-    public Vector2 getTilePosition() {
-        return tilePosition_;
+    public DynamicEntity(Texture tex) {
+        super(tex);
     }
 
     public float getVelocity() {
@@ -31,19 +32,11 @@ public abstract class GOAttacker {
         this.heading_ = newHeading;
     }
 
-    public void setTilePosition(float x, float y) {
-        this.tilePosition_ = new Vector2(x,y);
-    }
-
     public void setVelocity(float newVelocity) {
         this.velocity_ = newVelocity;
     }
 
     public void setHitPoints(float newHitPoints) {
         this.hitPoints_ = newHitPoints;
-    }
-
-    public void setDeltaPosition(Vector2 deltaPos) {
-        this.tilePosition_.add(deltaPos);
     }
 }
