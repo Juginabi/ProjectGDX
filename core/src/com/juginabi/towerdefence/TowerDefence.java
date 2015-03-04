@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.juginabi.towerdefence.GameEntities.Cannon;
 import com.juginabi.towerdefence.GameEntities.PencilNeckedGeek;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class TowerDefence extends ApplicationAdapter {
     final int MAP_HEIGHT = 18;
 
     List<PencilNeckedGeek> geeks;
+    List<Cannon> cannons;
 
     // Handles all input events
     EventHandler event = null;
@@ -92,6 +94,7 @@ public class TowerDefence extends ApplicationAdapter {
             geek.setVelocity((float)Math.random() * 150 + 64);
             geeks.add(geek);
         }
+        cannons = new ArrayList<Cannon>();
 
         event = new EventHandler();
 	}
@@ -140,12 +143,9 @@ public class TowerDefence extends ApplicationAdapter {
             if (cell != null)
                 Gdx.app.log(TAG, "Something here!");
             else {
-                Gdx.app.log(TAG, "Is this cell empty!?");
-                cell = new TiledMapTileLayer.Cell();
-                TextureRegion textureRegion = new TextureRegion(tex,64,64);
-                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegion);
-                cell.setTile(tile);
-                BUILD_LAYER.setCell(x,y, cell);
+                Cannon can = new Cannon(tex);
+                can.setPosition(x*64, y*64);
+                cannons.add(can);
             }
 
         }
@@ -164,6 +164,10 @@ public class TowerDefence extends ApplicationAdapter {
             geek.Update(Gdx.graphics.getDeltaTime());
             geek.draw(renderer.getBatch());
         }
+        for (Cannon can : cannons) {
+            can.Update(Gdx.graphics.getDeltaTime());
+            can.draw(renderer.getBatch());
+        }
         renderer.getBatch().end();
 
         EventHandler.CursorStatus status = event.getCursorStatus().get(0);
@@ -171,6 +175,7 @@ public class TowerDefence extends ApplicationAdapter {
             last.set(-1, -1, -1);
         checkTileTouched();
         //moveCamera();
+
 	}
 
     @Override
