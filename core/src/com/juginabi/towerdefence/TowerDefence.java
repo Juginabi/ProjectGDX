@@ -59,6 +59,8 @@ public class TowerDefence extends ApplicationAdapter {
 
     // Handles all input events
     EventHandler event = null;
+    // AssetManager
+    static AssetManager assetManager;
 	
 	@Override
 	public void create () {
@@ -75,21 +77,21 @@ public class TowerDefence extends ApplicationAdapter {
         cam.far = 100;
 
         // Load our level1 TD map
-        map = new TmxMapLoader().load("Maps/Level1.tmx");
+        map = new TmxMapLoader().load("Graphics/Maps/Level1.tmx");
         // Give map to tiledmap renderer
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // Get layers we use at out TD map
         BASE_LAYER = (TiledMapTileLayer) map.getLayers().get("BASE_LAYER");
-        BUILD_LAYER = (TiledMapTileLayer) map.getLayers().get("BUILD_LAYER");
+        BUILD_LAYER = (TiledMapTileLayer) map.getLayers().get(0);
         TOP_LAYER = (TiledMapTileLayer) map.getLayers().get("TOP_LAYER");
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
         batch = new SpriteBatch();
-        tex = new Texture("tankBlack.png");
+        tex = new Texture("Graphics/tankBlack.png");
         geeks = new ArrayList<PencilNeckedGeek>();
         for (int i = 0; i < 100; ++i) {
-            PencilNeckedGeek geek = new PencilNeckedGeek(new Texture("smiley.png"));
+            PencilNeckedGeek geek = new PencilNeckedGeek(new Texture("Graphics/smiley.png"));
             geek.setPosition(4 * TILE_HEIGHT, 17 * TILE_WIDTH);
             geek.setVelocity((float)Math.random() * 150 + 64);
             geeks.add(geek);
@@ -97,6 +99,7 @@ public class TowerDefence extends ApplicationAdapter {
         cannons = new ArrayList<Cannon>();
 
         event = new EventHandler();
+        assetManager = new AssetManager();
 	}
 
     public void moveCamera () {
@@ -140,12 +143,14 @@ public class TowerDefence extends ApplicationAdapter {
 
             Gdx.app.log(TAG, "Intersection at location (" + x + ", " + y + ")");
             TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
-            if (cell != null)
+            if (cell != null) {
                 Gdx.app.log(TAG, "Something here!");
-            else {
                 Cannon can = new Cannon(tex);
-                can.setPosition(x*64, y*64);
+                can.setPosition(x * 64, y * 64);
                 cannons.add(can);
+            }
+            else {
+
             }
 
         }
@@ -198,5 +203,9 @@ public class TowerDefence extends ApplicationAdapter {
 
     public void dispose() {
         Gdx.app.log(TAG, "dispose event!");
+    }
+
+    public static AssetManager getAssetManager() {
+        return assetManager;
     }
 }
