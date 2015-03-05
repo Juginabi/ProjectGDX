@@ -29,6 +29,6 @@ public class Cannon extends DynamicEntity {
     }
 
     private void Fire() {
-        TowerDefence.getAssetManager().playSound("sound");
+
     }
 }

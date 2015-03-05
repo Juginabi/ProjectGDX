@@ -2,20 +2,21 @@ package com.juginabi.towerdefence;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -59,11 +60,12 @@ public class TowerDefence extends ApplicationAdapter {
 
     // Handles all input events
     EventHandler event = null;
-    // AssetManager
-    static AssetManager assetManager;
+    AssetManager manager = new AssetManager();
 	
 	@Override
 	public void create () {
+        loadAssets();
+
         // Lets create camera
         cam = new OrthographicCamera();
         // Viewport for the camera
@@ -83,15 +85,16 @@ public class TowerDefence extends ApplicationAdapter {
 
         // Get layers we use at out TD map
         BASE_LAYER = (TiledMapTileLayer) map.getLayers().get("BASE_LAYER");
-        BUILD_LAYER = (TiledMapTileLayer) map.getLayers().get(0);
+        BUILD_LAYER = (TiledMapTileLayer) map.getLayers().get("BUILD_LAYER");
         TOP_LAYER = (TiledMapTileLayer) map.getLayers().get("TOP_LAYER");
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
         batch = new SpriteBatch();
         tex = new Texture("Graphics/tankBlack.png");
         geeks = new ArrayList<PencilNeckedGeek>();
+        manager.finishLoading();
         for (int i = 0; i < 100; ++i) {
-            PencilNeckedGeek geek = new PencilNeckedGeek(new Texture("Graphics/smiley.png"));
+            PencilNeckedGeek geek = new PencilNeckedGeek(manager.get("Graphics/smiley.png", Texture.class));
             geek.setPosition(4 * TILE_HEIGHT, 17 * TILE_WIDTH);
             geek.setVelocity((float)Math.random() * 150 + 64);
             geeks.add(geek);
@@ -99,8 +102,16 @@ public class TowerDefence extends ApplicationAdapter {
         cannons = new ArrayList<Cannon>();
 
         event = new EventHandler();
-        assetManager = new AssetManager();
 	}
+
+    private void loadAssets() {
+        // Texture assets
+        manager.load("Graphics/tankBlack.png", Texture.class);
+        manager.load("Graphics/smiley.png", Texture.class);
+
+        // Audio assets
+        manager.load("audio/defaultlaser.ogg", Sound.class);
+    }
 
     public void moveCamera () {
         EventHandler.CursorStatus status = event.getCursorStatus().get(0);
@@ -126,6 +137,7 @@ public class TowerDefence extends ApplicationAdapter {
             last.set(x, y, 0);
         }
 
+
     }
 
     private void checkTileTouched() {
@@ -145,12 +157,13 @@ public class TowerDefence extends ApplicationAdapter {
             TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
             if (cell != null) {
                 Gdx.app.log(TAG, "Something here!");
-                Cannon can = new Cannon(tex);
-                can.setPosition(x * 64, y * 64);
-                cannons.add(can);
             }
             else {
-
+                Cannon can = new Cannon(manager.get("Graphics/tankBlack.png", Texture.class));
+                can.setPosition(x * 64, y * 64);
+                cannons.add(can);
+                if (manager.isLoaded("audio/defaultlaser.ogg", Sound.class))
+                    manager.get("audio/defaultlaser.ogg", Sound.class).play();
             }
 
         }
@@ -163,7 +176,8 @@ public class TowerDefence extends ApplicationAdapter {
 
         cam.update();
         renderer.setView(cam);
-        renderer.render();
+        int[] baseLayer = {0};
+        renderer.render(baseLayer);
         renderer.getBatch().begin();
         for (PencilNeckedGeek geek : geeks) {
             geek.Update(Gdx.graphics.getDeltaTime());
@@ -174,6 +188,8 @@ public class TowerDefence extends ApplicationAdapter {
             can.draw(renderer.getBatch());
         }
         renderer.getBatch().end();
+        int[] restLayers = {1,2,3};
+        renderer.render(restLayers);
 
         EventHandler.CursorStatus status = event.getCursorStatus().get(0);
         if (status.getMouseLeft() == false)
@@ -203,9 +219,5 @@ public class TowerDefence extends ApplicationAdapter {
 
     public void dispose() {
         Gdx.app.log(TAG, "dispose event!");
-    }
-
-    public static AssetManager getAssetManager() {
-        return assetManager;
     }
 }

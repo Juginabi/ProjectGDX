@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="32" height="18" tilewidth="64" tileheight="64" nextobjectid="1">
+ <tileset firstgid="1" name="RPGpack" tilewidth="64" tileheight="64">
+  <image source="RPGpack_sheet.png" width="1280" height="832"/>
+  <terraintypes>
+   <terrain name="Dirt" tile="26"/>
+   <terrain name="Grass" tile="21"/>
+   <terrain name="Water" tile="31"/>
+  </terraintypes>
+  <tile id="0" terrain="0,0,0,1"/>
+  <tile id="1" terrain="0,0,1,1"/>
+  <tile id="2" terrain="0,0,1,0"/>
+  <tile id="3" terrain="1,1,1,0"/>
+  <tile id="4" terrain="1,1,0,1"/>
+  <tile id="5" terrain="1,1,1,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="6" terrain="1,1,0,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="7" terrain="1,1,0,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="8" terrain="0,0,0,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="9" terrain="0,0,1,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="10" terrain="1,1,1,2"/>
+  <tile id="11" terrain="1,1,2,2"/>
+  <tile id="12" terrain="1,1,2,1"/>
+  <tile id="13" terrain="2,2,2,1"/>
+  <tile id="14" terrain="2,2,1,2"/>
+  <tile id="20" terrain="0,1,0,1"/>
+  <tile id="21" terrain="1,1,1,1"/>
+  <tile id="22" terrain="1,0,1,0"/>
+  <tile id="23" terrain="1,0,1,1"/>
+  <tile id="24" terrain="0,1,1,1"/>
+  <tile id="25" terrain="1,0,1,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="26" terrain="0,0,0,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="27" terrain="0,1,0,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="28" terrain="0,1,0,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="29" terrain="1,0,0,0">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="30" terrain="1,2,1,2"/>
+  <tile id="31" terrain="2,2,2,2"/>
+  <tile id="32" terrain="2,1,2,1"/>
+  <tile id="33" terrain="2,1,2,2"/>
+  <tile id="34" terrain="1,2,2,2"/>
+  <tile id="40" terrain="0,1,0,0"/>
+  <tile id="41" terrain="1,1,0,0"/>
+  <tile id="42" terrain="1,0,0,0"/>
+  <tile id="43" terrain="1,1,1,1"/>
+  <tile id="44" terrain="1,1,1,1"/>
+  <tile id="45" terrain="1,0,1,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="46" terrain="0,0,1,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="47" terrain="0,1,1,1">
+   <properties>
+    <property name="walkable" value="1"/>
+   </properties>
+  </tile>
+  <tile id="50" terrain="1,2,1,1"/>
+  <tile id="51" terrain="2,2,1,1"/>
+  <tile id="52" terrain="2,1,1,1"/>
+  <tile id="53">
+   <properties>
+    <property name="START_POINT" value="1"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="END_POINT" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="BASE_LAYER" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJzNVVsOwjAMC68jEECcgEfvfz2KtAjPc9pV8EEkC7GlcZxkqdnHThXXiqP91npxywT0e//36fc5ocBzh+fKD30wbvigxXn2i5huy3zc5hzF5vlhPqyrEH/m5+C/r7ivwEHkzbpc6PeO/njXA9Z4LX9oVfq5h5uKrcBO1JhzR12sn+vf6yHOgNKY6Q9dPX7ufys+a2RjXczf0qj4MS/1vsUfcZmfNeB3pXrolte4p1/xZzWOfFVvsvxG9WdzgjxqhtHnW341/7hjVW44I6369PYv1/hmy732sGUPsUejZ9E4xsh+Gz2r9n/oP5vebYjszltz9gL5sn6+23j+mQ9nv3U34hms17/YC/EbNug=
+  </data>
+ </layer>
+ <layer name="BUILD_LAYER" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJztlEkOAiEQRWvvdASnI2gvNQ5nUG/qcA33hHgTP2mIhFBFC7Qrf/LSNEN9KIYxEa1BAxS1Mt+VrS/FxNU2rvbiTsAMzKm7tFdWTB+uPtQ04e/H0UwfX2Ef98/NJ+XPSTHlb5XyT81fkhsj5S13/bVUe/85ley/lPs9OIBjpG0AhpZRhv9L8DW6ghM4gwu4M7G5+Cl/I5dzM5cwD0+S11/DX1Lo/+jJ3+SAOwNbsAG7SJv/djeZ/ql7H645NrbW/ZfO463D+FL/PvT3b/0X9HmrfsnS+r8BTC80OQ==
+  </data>
+ </layer>
+ <layer name="TOP_LAYER" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAenEZin8ShBpc4qQDZnNM4VeFWA+NTyz0wcBIHm9qAEvfD9BATboMVkBr/xJhDTb0tQDwbiFspMB8XOEuEmhlQ+2fSwH4QgIU5yC3YwgFk/3oa2k8IrAHi/UC8loZ2gMKAlnkcHyBk7yEg/g+lcemlVv4nJj2OJPAdCx4FQxMAAJ1zJNs=
+  </data>
+ </layer>
+ <layer name="OBJECTIVE_LAYER" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFZgy0AeY0MncUjIJRMApGwSgYBaOAVAAAxHUAbg==
+  </data>
+ </layer>
+</map>
