@@ -149,10 +149,6 @@ public class TowerDefence extends ApplicationAdapter {
                 can.setPosition(x * 64, y * 64);
                 cannons.add(can);
             }
-            else {
-
-            }
-
         }
     }
 
@@ -163,6 +159,7 @@ public class TowerDefence extends ApplicationAdapter {
 
         cam.update();
         renderer.setView(cam);
+        /// TODO: Render layers from base to top
         renderer.render();
         renderer.getBatch().begin();
         for (PencilNeckedGeek geek : geeks) {
