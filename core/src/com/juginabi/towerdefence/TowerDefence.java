@@ -3,14 +3,10 @@ package com.juginabi.towerdefence;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -20,6 +16,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.juginabi.towerdefence.GameEntities.Cannon;
@@ -35,7 +32,6 @@ public class TowerDefence extends ApplicationAdapter {
     Texture tex;
     OrthographicCamera cam;
     Viewport viewport;
-    SpriteBatch batch;
 
     final Plane intersectPlane = new Plane(new Vector3(0, 0, 1), 0);
     final Vector3 intersectPos = new Vector3();
@@ -59,6 +55,8 @@ public class TowerDefence extends ApplicationAdapter {
     List<PencilNeckedGeek> geeks;
     List<Cannon> cannons;
 
+    long timeSinceSpawn;
+
     // Handles all input events
     private EventHandler event = null;
     private static AssetManager manager = new AssetManager();
@@ -73,7 +71,7 @@ public class TowerDefence extends ApplicationAdapter {
         viewport = new ExtendViewport(1920, 1080, cam);
         viewport.apply();
         // Set camera position to middle of viewport dimensions
-        cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
+        cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
         // Near clipping plane
         cam.near = 1;
         // Far clipping plane
@@ -90,17 +88,9 @@ public class TowerDefence extends ApplicationAdapter {
         TOP_LAYER = (TiledMapTileLayer) map.getLayers().get("TOP_LAYER");
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
-        batch = new SpriteBatch();
-        tex = new Texture("Graphics/tankBlack.png");
         geeks = new ArrayList<PencilNeckedGeek>();
-        manager.finishLoading();
-        for (int i = 0; i < 100; ++i) {
-            PencilNeckedGeek geek = new PencilNeckedGeek(manager.get("Graphics/smiley.png", Texture.class));
-            geek.setPosition(4 * TILE_HEIGHT, 17 * TILE_WIDTH);
-            geek.setVelocity((float)Math.random() * 150 + 64);
-            geeks.add(geek);
-        }
         cannons = new ArrayList<Cannon>();
+        timeSinceSpawn = TimeUtils.millis();
 
         event = new EventHandler();
 	}
@@ -176,29 +166,46 @@ public class TowerDefence extends ApplicationAdapter {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        cam.update();
-        renderer.setView(cam);
-        int[] baseLayer = {0};
-        renderer.render(baseLayer);
-        renderer.getBatch().begin();
-        for (PencilNeckedGeek geek : geeks) {
-            geek.Update(Gdx.graphics.getDeltaTime());
-            geek.draw(renderer.getBatch());
-        }
-        for (Cannon can : cannons) {
-            can.Update(Gdx.graphics.getDeltaTime());
-            can.draw(renderer.getBatch());
-        }
-        renderer.getBatch().end();
-        int[] restLayers = {1,2,3};
-        renderer.render(restLayers);
+        if (manager.update()) {
+            // All assets loaded
+            cam.update();
+            renderer.setView(cam);
+            long time = TimeUtils.millis();
 
-        EventHandler.CursorStatus status = event.getCursorStatus().get(0);
-        if (status.getMouseLeft() == false)
-            last.set(-1, -1, -1);
-        checkTileTouched();
-        //moveCamera();
+            if ((time - timeSinceSpawn) > 1000) {
+                // Spawn another geek
+                if (geeks.size() < 100) {
+                    PencilNeckedGeek geek = new PencilNeckedGeek(manager.get("Graphics/smiley.png", Texture.class));
+                    geek.setVelocity(64f + (float) Math.random() * 100);
+                    geek.setPosition(TILE_WIDTH*4, TILE_HEIGHT*17f);
+                    geeks.add(geek);
+                    timeSinceSpawn = TimeUtils.millis();
+                }
+            }
+            int[] baseLayer = {0,1};
+            renderer.render(baseLayer);
+            renderer.getBatch().begin();
+            for (PencilNeckedGeek geek : geeks) {
+                geek.Update(Gdx.graphics.getDeltaTime());
+                geek.draw(renderer.getBatch());
+            }
+            for (Cannon can : cannons) {
+                can.Update(Gdx.graphics.getDeltaTime());
+                can.draw(renderer.getBatch());
+            }
+            renderer.getBatch().end();
+            int[] restLayers = {2,3,4};
+            renderer.render(restLayers);
 
+            EventHandler.CursorStatus status = event.getCursorStatus().get(0);
+            if (status.getMouseLeft() == false)
+                last.set(-1, -1, -1);
+            checkTileTouched();
+            //moveCamera();
+        } else {
+            float progress = manager.getProgress();
+            Gdx.app.log(TAG, "Asset manager load progress: " + String.format("%.2f", progress * 100));
+        }
 	}
 
     @Override
@@ -206,8 +213,6 @@ public class TowerDefence extends ApplicationAdapter {
         // Dispose all the assets here and recreate
         Gdx.app.log(TAG, "resize event!");
         viewport.update(width,height);
-        batch.dispose();
-        batch = new SpriteBatch();
     }
 
     @Override
@@ -220,6 +225,7 @@ public class TowerDefence extends ApplicationAdapter {
     }
 
     public void dispose() {
+        manager.dispose();
         Gdx.app.log(TAG, "dispose event!");
     }
 

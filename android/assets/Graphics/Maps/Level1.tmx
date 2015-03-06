@@ -111,22 +111,27 @@
    </properties>
   </tile>
  </tileset>
- <layer name="BASE_LAYER" width="32" height="18">
+ <layer name="BASE_LAYER1" width="32" height="18">
   <data encoding="base64" compression="zlib">
    eJzNVVsOwjAMC68jEECcgEfvfz2KtAjPc9pV8EEkC7GlcZxkqdnHThXXiqP91npxywT0e//36fc5ocBzh+fKD30wbvigxXn2i5huy3zc5hzF5vlhPqyrEH/m5+C/r7ivwEHkzbpc6PeO/njXA9Z4LX9oVfq5h5uKrcBO1JhzR12sn+vf6yHOgNKY6Q9dPX7ufys+a2RjXczf0qj4MS/1vsUfcZmfNeB3pXrolte4p1/xZzWOfFVvsvxG9WdzgjxqhtHnW341/7hjVW44I6369PYv1/hmy732sGUPsUejZ9E4xsh+Gz2r9n/oP5vebYjszltz9gL5sn6+23j+mQ9nv3U34hms17/YC/EbNug=
   </data>
  </layer>
+ <layer name="BASE_LAYER2" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAAFTSaWoBa5qrgYONSQ2u78NlL67CkhdnY7CHHDlr5nZ6AWuFMD71qFNhBib20sh/ZDSoMhN1DC/tJAbSynxi/08p+QvYKImFcemlRFo8C1LDHFQejgDgAABF4Bcc=
+  </data>
+ </layer>
  <layer name="BUILD_LAYER" width="32" height="18">
   <data encoding="base64" compression="zlib">
-   eJztlEkOAiEQRWvvdASnI2gvNQ5nUG/qcA33hHgTP2mIhFBFC7Qrf/LSNEN9KIYxEa1BAxS1Mt+VrS/FxNU2rvbiTsAMzKm7tFdWTB+uPtQ04e/H0UwfX2Ef98/NJ+XPSTHlb5XyT81fkhsj5S13/bVUe/85ley/lPs9OIBjpG0AhpZRhv9L8DW6ghM4gwu4M7G5+Cl/I5dzM5cwD0+S11/DX1Lo/+jJ3+SAOwNbsAG7SJv/djeZ/ql7H645NrbW/ZfO463D+FL/PvT3b/0X9HmrfsnS+r8BTC80OQ==
+   eJzNlFkOwjAMRP3PdgS2I0D5A7GcAbgp0GvwX0W9CVMpEcaKE5KWipGeujieaZM2YyJagwJUYGOPK3u/LY2vsb6G+U7ADMzpUxvSZdh5pYzR7kvfaSSf+xiKS45x184nNV9TpZzHlJovn9/VYvAeI3pT8n2KzU1Kb8765+S3WX+5vrx2AEdw8tQHYGgZZeTX5JfzuIEzuIAreIi68+b+ud9f8yxyDp8Ufv8u8n3S8ssf5TdzIP8/px3Ygr2nzvfuIjPft7dwjzJQ7/r/rwO1e6Q3Jz+2v4Uyvu3V8vvSv+Qv6L1X9cnS5r8A44RDMw==
   </data>
  </layer>
  <layer name="TOP_LAYER" width="32" height="18">
   <data encoding="base64" compression="zlib">
-   eJxjYCAenEZin8ShBpc4qQDZnNM4VeFWA+NTyz0wcBIHm9qAEvfD9BATboMVkBr/xJhDTb0tQDwbiFspMB8XOEuEmhlQ+2fSwH4QgIU5yC3YwgFk/3oa2k8IrAHi/UC8loZ2gMKAlnkcHyBk7yEg/g+lcemlVv4nJj2OJPAdCx4FQxMAAJ1zJNs=
+   eJxjYCAenEZin8ShBpc4qQDZnNM4VeFWA+NTyz0wcBIHm9qAEvfD9BATboMVkBr/xJhDTb0tQDwbiFspMB8XOEuEmhlQ+2fSwH4QgIU5yC3YwgFk/3oa2k8IrAHi/UC8loZ2gMKAlnkcHyBk7yEg/g+lcemlVv4nJj2OJPAYDX8fWOeMAgoAAA+TJIs=
   </data>
  </layer>
- <layer name="OBJECTIVE_LAYER" width="32" height="18">
+ <layer name="OBJECTIVE_LAYER" width="32" height="18" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYEAFZgy0AeY0MncUjIJRMApGwSgYBaOAVAAAxHUAbg==
   </data>
