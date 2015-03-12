@@ -1,10 +1,24 @@
 android {
     buildToolsVersion "21.1.2"
     compileSdkVersion 21
+    signingConfigs {
+        mySignature {
+            storeFile     file('D:/Dropbox/Oma/KeyStore/AndroidKeyStore.jks')
+            storePassword '#Reponek12#'
+            keyAlias      'myandroidkeystore'
+            keyPassword   '#Reponek12#'
+        }
+    }
+
+    defaultConfig {
+        signingConfig signingConfigs.mySignature
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
+            resources.srcDirs = ['src']
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
@@ -12,6 +26,15 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+// use minifyEnabled instead of runProguard if your gradle plugin version is 0.14+
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+            proguardFile 'proguard-project.txt'
+        }
     }
 }
 
@@ -24,7 +47,7 @@ tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives() { 
+task copyAndroidNatives() {
     file("libs/armeabi/").mkdirs();
     file("libs/armeabi-v7a/").mkdirs();
     file("libs/x86/").mkdirs();
@@ -45,25 +68,8 @@ task copyAndroidNatives() {
 }
 
 task run(type: Exec) {
-    def path
-    def localProperties = project.file("../local.properties")
-    if (localProperties.exists()) {
-        Properties properties = new Properties()
-        localProperties.withInputStream { instr ->
-            properties.load(instr)
-        }
-        def sdkDir = properties.getProperty('sdk.dir')
-        if (sdkDir) {
-            path = sdkDir
-        } else {
-            path = "$System.env.ANDROID_HOME"
-        }
-    } else {
-        path = "$System.env.ANDROID_HOME"
-    }
-
-    def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.juginabi.towerdefence.android/com.juginabi.towerdefence.android.AndroidLauncher'
+    def adb = "$System.env.ANDROID_HOME/platform-tools/adb"
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.dozingcatsoftware.bouncy.android/com.dozingcatsoftware.bouncy.android.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.
@@ -82,8 +88,8 @@ eclipse {
     }
 
     classpath {
-        plusConfigurations += [ project.configurations.compile ]        
-        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'       
+        plusConfigurations += project.configurations.compile
+        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'
     }
 
     project {
@@ -101,7 +107,7 @@ eclipse {
 idea {
     module {
         sourceDirs += file("src");
-        scopes = [ COMPILE: [plus:[project.configurations.compile]]]        
+        scopes = [ COMPILE: [plus:[project.configurations.compile]]]
 
         iml {
             withXml {

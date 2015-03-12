@@ -11,15 +11,15 @@ import java.util.Map;
 /**
  * Created by Jukka on 20.2.2015.
  */
-public class EventHandler implements InputProcessor {
+class EventHandler implements InputProcessor {
     // Keyboard
-    boolean keyUP       = false;
-    boolean keyDOWN     = false;
-    boolean keyLEFT     = false;
-    boolean keyRIGHT    = false;
+    private boolean keyUP       = false;
+    private boolean keyDOWN     = false;
+    private boolean keyLEFT     = false;
+    private boolean keyRIGHT    = false;
 
     // Mouse and touch input
-    Map<Integer, CursorStatus> cursorStatusMap = null;
+    private Map<Integer, CursorStatus> cursorStatusMap = null;
 
     EventHandler() {
         cursorStatusMap = new HashMap<Integer, CursorStatus>();
