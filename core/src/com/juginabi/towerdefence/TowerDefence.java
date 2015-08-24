@@ -20,6 +20,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -32,6 +33,7 @@ import com.juginabi.towerdefence.GameEntities.Towers.Cannon;
 
 public class TowerDefence extends ApplicationAdapter {
     private BitmapFont font;
+    private SpriteBatch batchSprite;
 
     // Tag of this app
     private static String TAG = "TowerDefence";
@@ -78,12 +80,15 @@ public class TowerDefence extends ApplicationAdapter {
 
     private boolean worldInitialized = false;
 
+    private PhysicsWorld physicsWorld;
+
     public interface traceInterface {
         public void startTrace(String name);
     }
 
 	@Override
 	public void create () {
+        physicsWorld = new PhysicsWorld(new Vector2(0, -10), true, true);
         Gdx.app.log(TAG, "Create!");
         // Event handler init
         event = new EventHandler();
@@ -95,16 +100,16 @@ public class TowerDefence extends ApplicationAdapter {
         world = new GameWorld();
 
         // Lets create camera
-        cam = new OrthographicCamera();
+        cam = new OrthographicCamera(10,10);
         // Viewport for the camera
-        viewport = new ExtendViewport(1920, 1080, cam);
-        viewport.apply();
+        //viewport = new ExtendViewport(1920, 1080, cam);
+        //viewport.apply();
         // Set camera position to middle of viewport dimensions
-        cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
+        //cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
         // Near clipping plane
-        cam.near = 1;
+        //cam.near = 1;
         // Far clipping plane
-        cam.far = 100;
+        //cam.far = 1000;
 
         // Load our level1 TD map
         map = new TmxMapLoader().load("Graphics/Maps/Level1.tmx");
@@ -126,6 +131,7 @@ public class TowerDefence extends ApplicationAdapter {
 
         font = new BitmapFont();
         font.setColor(Color.RED);
+        batchSprite = new SpriteBatch();
 	}
 
     private void loadAssets() {
@@ -137,7 +143,7 @@ public class TowerDefence extends ApplicationAdapter {
         for (FileHandle fi : files)
             Gdx.app.log(TAG, fi.name());
         manager.load("Audio/threeTone2.ogg", Sound.class);
-        manager.load("Audio/defaultlaser.ogg", Sound.class);
+        manager.load("Audio/defaultLaser.ogg", Sound.class);
     }
 
     public void moveCamera () {
@@ -163,8 +169,6 @@ public class TowerDefence extends ApplicationAdapter {
             }
             last.set(x, y, 0);
         }
-
-
     }
 
     private void checkTileTouched() {
@@ -200,16 +204,27 @@ public class TowerDefence extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-        Gdx.gl.glClearColor(175/255f,238/255f,238/255f,1);
+        Gdx.gl.glClearColor(0/255f,0/255f,0/255f,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float deltaTime = Gdx.graphics.getRawDeltaTime();
 
         if (manager.update()) {
+
+            if (Gdx.input.isTouched()) {
+                EventHandler.CursorStatus status = event.getCursorStatus().get(0);
+                Ray pickRay = cam.getPickRay(status.getPosition().x, status.getPosition().y);
+                Intersector.intersectRayPlane(pickRay, intersectPlane, curr);
+                physicsWorld.createDynamicBody(curr.x, curr.y);
+            }
             // All assets loaded
             cam.update();
-            renderer.setView(cam);
+            //renderer.setView(cam);
             long time = TimeUtils.millis();
+            physicsWorld.doPhysicsStep(deltaTime);
+            batchSprite.begin();
+            physicsWorld.render(cam);
+            batchSprite.end();
 
             if (!worldInitialized) {
                 world.InitializeWorld();
@@ -221,27 +236,27 @@ public class TowerDefence extends ApplicationAdapter {
             // Fill map with cannon towers.
             FillMapWithCannonTowers(time);
             // Render base layers
-            renderer.render(groundLayers);
+            //renderer.render(groundLayers);
 
             // Update the world state
             world.UpdateWorld(deltaTime);
 
             // Begin batch and start drawing entities and towers to the map
-            renderer.getBatch().begin();
+            //renderer.getBatch().begin();
             // Draw the world state using tiledMap Batch
-            world.DrawWorld(renderer.getBatch());
+            //world.DrawWorld(renderer.getBatch());
             // End batch
-            renderer.getBatch().end();
+            //renderer.getBatch().end();
 
             // Render rest of the tilemap layers
-            renderer.render(topLayers);
+            //renderer.render(topLayers);
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);
             if (!status.getMouseLeft())
                 last.set(-1, -1, -1);
             // Check if tile touched and add new tower to touched location if possible
-            checkTileTouched();
+            //checkTileTouched();
             //moveCamera();
 
         } else {
@@ -303,7 +318,8 @@ public class TowerDefence extends ApplicationAdapter {
     public void resize(int width, int height) {
         // Dispose all the assets here and recreate
         Gdx.app.log(TAG, "resize event!");
-        viewport.update(width,height);
+        //viewport.update(width,height);
+
     }
 
     @Override

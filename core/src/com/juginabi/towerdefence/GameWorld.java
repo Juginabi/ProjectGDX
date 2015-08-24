@@ -98,6 +98,7 @@ public class GameWorld {
                     break;
             }
         } catch (EmptyStackException e) {
+            // This is bound to happen!
             Gdx.app.log(TAG,e.getMessage());
             entity = null;
         }
