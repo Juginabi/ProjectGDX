@@ -7,10 +7,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.GameEntities.Projectiles.Laser;
+import com.juginabi.towerdefence.PhysicsWorld;
 import com.juginabi.towerdefence.TileWorld;
 import com.juginabi.towerdefence.TowerDefence;
 
@@ -24,13 +28,10 @@ import java.util.List;
 public class Cannon extends DynamicEntity {
     // Tag for logging purposes
     private static String TAG = "Cannon";
-
     // Last reload time. This controls how ofter this entity fires the weapon
     private double timeSinceLastFire = 0;
-
     // Reference to sound played when weapon is fired
     private Sound fireSound;
-
     // Reload time and damage
     private float reloadTime = 500f;
     private final float reloadVariance = (float) Math.random() * 200;
@@ -39,17 +40,26 @@ public class Cannon extends DynamicEntity {
     private final float beamColorValue = (float)Math.random();
     private Color beamColor = Color.RED;
     private final Color rayColor = Color.WHITE;
-
     // Range of fire
     private final float rangeOfFire_ = 4*64f;
-
     // Target entity
     private DynamicEntity target;
-
+    // Tileworld
+    // Tileworld which handles entity updates
     List<TileWorld.Tile> tiles;
+    // Physics world where physical presence is mapped
+    PhysicsWorld physicsWorld;
+    // Physical body definition
+    BodyDef bodyDef;
 
-    public Cannon(GameWorld parent, TextureAtlas.AtlasRegion tex) {
+    // Constructor
+    public Cannon(GameWorld parent, TextureAtlas.AtlasRegion tex, PhysicsWorld physicsWorld) {
         super(parent, tex, GameWorld.TowerCannon);
+
+        this.physicsWorld = physicsWorld;
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+
         tiles = new ArrayList<TileWorld.Tile>();
         timeSinceLastFire = TimeUtils.millis();
         damage = 5f;
@@ -65,17 +75,29 @@ public class Cannon extends DynamicEntity {
         else if (beamColorValue > 0f)
             beamColor = Color.BLACK;
 
+        // TODO create physical body in physics world
+
         SetStatusAlive(false);
     }
 
     public void Initialize(float x, float y) {
-        setPosition(x,y);
+        setPosition(x, y);
         isAlive_ = true;
         int tileX = (int)(x / 64f);
         int tileY = (int)(y / 64f);
         GetParentWorld().GetTilesInRange(tileX, tileY, 2, tiles);
+
+        bodyDef.position.set(x/64f,y/64f);
+        Body body = physicsWorld.world_.createBody(bodyDef);
+
+        PolygonShape tankBox = new PolygonShape();
+        tankBox.setAsBox(1,1);
+        body.createFixture(tankBox, 0.0f);
+        tankBox.dispose();
+        Gdx.app.log(TAG, "Created cannon body to " + x + ", " + y);
     }
 
+    @Deprecated
     public float GetRangeOfFire() {
         return this.rangeOfFire_;
     }
@@ -96,10 +118,15 @@ public class Cannon extends DynamicEntity {
         return true;
     }
 
+    @Deprecated
     private float getDistanceToEnemy(float x, float y) {
         return Vector2.dst(getX(), getY(), x, y);
     }
 
+    /**
+     * @deprecated Closest enemy is gotten from physics sensor
+     */
+    @Deprecated
     private void GetTarget() {
         if (!tiles.isEmpty()) {
             List<DynamicEntity> entityList = new ArrayList<DynamicEntity>();

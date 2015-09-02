@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 public class PhysicsWorld {
     // PhysicsWorld
-    private World world_;
+    public World world_;
 
     // Constants
     private int VELOCITY_ITERATIONS = 6;
@@ -28,7 +28,7 @@ public class PhysicsWorld {
 
     // Debug renderer if any
     Box2DDebugRenderer debugRenderer_;
-    boolean debugRenderingEnabled_ = false;
+boolean debugRenderingEnabled_ = false;
 
     public PhysicsWorld(Vector2 gravityVector, boolean sleepingObjects, boolean enableDebugRendering) {
         world_ = new World(gravityVector, sleepingObjects);
@@ -59,7 +59,7 @@ public class PhysicsWorld {
 
     public void render(OrthographicCamera camera) {
         if (debugRenderingEnabled_) {
-            debugRenderer_.render(world_, camera.combined);
+            debugRenderer_.render(world_, camera.combined.scale(TowerDefence.TILE_WIDTH,TowerDefence.TILE_HEIGHT,0));
         }
     }
 

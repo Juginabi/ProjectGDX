@@ -61,10 +61,10 @@ public class TowerDefence extends ApplicationAdapter {
     private OrthogonalTiledMapRenderer renderer;
 
     // Map width/height properties
-    private final int TILE_WIDTH = 64;
-    private final int TILE_HEIGHT = 64;
-    private final int MAP_WIDTH = 32;
-    private final int MAP_HEIGHT = 18;
+    public static final int TILE_WIDTH = 64;
+    public static final int TILE_HEIGHT = 64;
+    public static final int MAP_WIDTH = 32;
+    public static final int MAP_HEIGHT = 18;
 
     private long timeSinceSpawn;
     private long spawnInterval;
@@ -97,10 +97,10 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        world = new GameWorld();
+        world = new GameWorld(physicsWorld);
 
         // Lets create camera
-        cam = new OrthographicCamera(10,10);
+        cam = new OrthographicCamera();
         // Viewport for the camera
         //viewport = new ExtendViewport(1920, 1080, cam);
         //viewport.apply();
@@ -211,12 +211,12 @@ public class TowerDefence extends ApplicationAdapter {
 
         if (manager.update()) {
 
-            if (Gdx.input.isTouched()) {
+            /*if (Gdx.input.isTouched()) {
                 EventHandler.CursorStatus status = event.getCursorStatus().get(0);
                 Ray pickRay = cam.getPickRay(status.getPosition().x, status.getPosition().y);
                 Intersector.intersectRayPlane(pickRay, intersectPlane, curr);
                 physicsWorld.createDynamicBody(curr.x, curr.y);
-            }
+            }*/
             // All assets loaded
             cam.update();
             //renderer.setView(cam);
@@ -236,20 +236,21 @@ public class TowerDefence extends ApplicationAdapter {
             // Fill map with cannon towers.
             FillMapWithCannonTowers(time);
             // Render base layers
-            //renderer.render(groundLayers);
+            renderer.setView(cam);
+            renderer.render(groundLayers);
 
             // Update the world state
             world.UpdateWorld(deltaTime);
 
             // Begin batch and start drawing entities and towers to the map
-            //renderer.getBatch().begin();
+            renderer.getBatch().begin();
             // Draw the world state using tiledMap Batch
-            //world.DrawWorld(renderer.getBatch());
+            world.DrawWorld(renderer.getBatch());
             // End batch
-            //renderer.getBatch().end();
+            renderer.getBatch().end();
 
             // Render rest of the tilemap layers
-            //renderer.render(topLayers);
+            renderer.render(topLayers);
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);
@@ -318,7 +319,9 @@ public class TowerDefence extends ApplicationAdapter {
     public void resize(int width, int height) {
         // Dispose all the assets here and recreate
         Gdx.app.log(TAG, "resize event!");
-        //viewport.update(width,height);
+        cam.viewportHeight = (10 / width) * height;
+        cam.position.set(200,200, 0);
+        cam.update();
 
     }
 
