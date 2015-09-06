@@ -59,7 +59,7 @@ boolean debugRenderingEnabled_ = false;
 
     public void render(OrthographicCamera camera) {
         if (debugRenderingEnabled_) {
-            debugRenderer_.render(world_, camera.combined.scale(TowerDefence.TILE_WIDTH,TowerDefence.TILE_HEIGHT,0));
+            debugRenderer_.render(world_, camera.combined);
         }
     }
 

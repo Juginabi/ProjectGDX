@@ -113,7 +113,7 @@ public class GameWorld {
         switch (type) {
             case TowerCannon:
             case TowerLaser:
-                entity = new Cannon(this, entityAtlas.findRegion("tankBlack"), physicsWorld);
+                entity = new Cannon(this, entityAtlas.findRegion("tankBlack"));
                 break;
             case EnemyGeek:
                 entity = new PencilNeckedGeek(this, entityAtlas.findRegion("smiley"));

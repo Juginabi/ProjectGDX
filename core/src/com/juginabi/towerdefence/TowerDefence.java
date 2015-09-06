@@ -21,6 +21,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -92,7 +93,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        world = new GameWorld();
+        world = new GameWorld(new PhysicsWorld(new Vector2(0, -10), true, true));
 
         // Lets create camera
         cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
@@ -284,7 +285,7 @@ public class TowerDefence extends ApplicationAdapter {
                         DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
                         if (cannon != null) {
                             // Entity succesfully created
-                            ((Cannon)cannon).Initialize(x,y);
+                            ((Cannon)cannon).Initialize(x, y);
                             //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
                             //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
                         }
