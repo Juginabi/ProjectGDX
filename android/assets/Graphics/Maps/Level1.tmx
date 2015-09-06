@@ -123,7 +123,7 @@
  </layer>
  <layer name="BUILD_LAYER" width="32" height="18">
   <data encoding="base64" compression="zlib">
-   eJzNlFkOwjAMRP3PdgS2I0D5A7GcAbgp0GvwX0W9CVMpEcaKE5KWipGeujieaZM2YyJagwJUYGOPK3u/LY2vsb6G+U7ADMzpUxvSZdh5pYzR7kvfaSSf+xiKS45x184nNV9TpZzHlJovn9/VYvAeI3pT8n2KzU1Kb8765+S3WX+5vrx2AEdw8tQHYGgZZeTX5JfzuIEzuIAreIi68+b+ud9f8yxyDp8Ufv8u8n3S8ssf5TdzIP8/px3Ygr2nzvfuIjPft7dwjzJQ7/r/rwO1e6Q3Jz+2v4Uyvu3V8vvSv+Qv6L1X9cnS5r8A44RDMw==
+   eJzNlEkOwjAMRb1nOkAXTEcAliCGMwA3BXoN9lXUm/ArJcJYcULSUvGlpw6O/2+TNmMiWoMNqEBhjyt7vy2Nr7G+hvlOwAzM6VMF6TLsvFLGaPel7zSSz30MxSXHuGvnk5qvqVLOY0rNl8/vajF4jxG9Kfk+xeYmpTdn/XPy26y/XF9eO4AjOHnqAzC0jDLya/LLedzAGVzAFTxE3Xlz/9zvr3kWOYdPCr9/F/k+afnlj/KbOZD/n9MObMHeU+d79yYz37e3cI8yUO/6/68DtXukNyc/tr+FMr7t1fL70r/kL+i9V/XJ0ua/ABfhO7Y=
   </data>
  </layer>
  <layer name="TOP_LAYER" width="32" height="18">
@@ -131,7 +131,7 @@
    eJxjYCAenEZin8ShBpc4qQDZnNM4VeFWA+NTyz0wcBIHm9qAEvfD9BATboMVkBr/xJhDTb0tQDwbiFspMB8XOEuEmhlQ+2fSwH4QgIU5yC3YwgFk/3oa2k8IrAHi/UC8loZ2gMKAlnkcHyBk7yEg/g+lcemlVv4nJj2OJPAYDX8fWOeMAgoAAA+TJIs=
   </data>
  </layer>
- <layer name="OBJECTIVE_LAYER" width="32" height="18" visible="0">
+ <layer name="OBJECTIVE_LAYER" width="32" height="18">
   <data encoding="base64" compression="zlib">
    eJxjYEAFZgy0AeY0MncUjIJRMApGwSgYBaOAVAAAxHUAbg==
   </data>

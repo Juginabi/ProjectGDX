@@ -20,6 +20,7 @@ public class TileWorld {
     private int mapWidth;
     private int mapHeight;
 
+    @Deprecated
     public TileWorld(int width, int height) {
         tileMap = new HashMap< Integer, List<Tile> >();
         this.mapWidth = width;
@@ -33,6 +34,7 @@ public class TileWorld {
         }
     }
 
+    @Deprecated
     public void Update(float tickSeconds, Stack<DynamicEntity> deadStack) {
         int i = 0;
         Stack<DynamicEntity> transferList = new Stack<DynamicEntity>();
@@ -65,10 +67,12 @@ public class TileWorld {
         }
     }
 
+    @Deprecated
     private boolean checkMapBounds(float x, float y) {
         return (x >= 0 && y >= 0 && x <= mapWidth && y <= mapHeight);
     }
 
+    @Deprecated
     public void Draw(Batch batch) {
         // TODO Draw world in correct order and from correct direction
         int i = 0;
@@ -83,15 +87,18 @@ public class TileWorld {
         }
     }
 
+    @Deprecated
     public void InsertEntity(int x, int y, DynamicEntity entity) {
         Tile tile = GetTile(x, y);
         tile.InsertEntity(entity);
     }
 
+    @Deprecated
     public Tile GetTile(int x, int y) {
         return tileMap.get(x).get(y);
     }
 
+    @Deprecated
     public class Tile {
         private final String TAG;
         public final int x;
@@ -102,7 +109,7 @@ public class TileWorld {
         private int upperY;
         private List<DynamicEntity> entityList;
         private Stack<DynamicEntity> transferList;
-
+        @Deprecated
         public Tile(int x, int y) {
             // I am a tile and this is my neighbourhood!
             this.x = x;
@@ -115,14 +122,14 @@ public class TileWorld {
             transferList = new Stack<DynamicEntity>();
             TAG = "TILE(" + x + "," + y + ")";
         }
-
+        @Deprecated
         public void GetEntities(List<DynamicEntity> list) {
             if (!entityList.isEmpty()) {
                 for (int i = 0; i < entityList.size(); ++i)
                     list.add(entityList.get(i));
             }
         }
-
+        @Deprecated
         public void Update(float tickSeconds) {
             if (entityList.size() > 0) {
                 Iterator it = entityList.iterator();
@@ -137,29 +144,29 @@ public class TileWorld {
                 }
             }
         }
-
+        @Deprecated
         public void InsertEntity(DynamicEntity entity) {
             if (!entityList.contains(entity)) {
                 entityList.add(entity);
             }
         }
-
+        @Deprecated
         public void RemoveEntity(DynamicEntity entity) {
             if (entityList.contains(entity))
                 entityList.remove(entity);
         }
-
+        @Deprecated
         private boolean checkBounds(float x, float y) {
             if (x < this.lowerX || x > upperX || y < lowerY || y > upperY)
                 return false;
             else
                 return true;
         }
-
+        @Deprecated
         public void getTransferList(Stack<DynamicEntity> masterList) {
             while (!transferList.isEmpty()) masterList.push(transferList.pop());
         }
-
+        @Deprecated
         public void Draw(Batch batch) {
             if (entityList.size() > 0) {
                 Iterator it = entityList.iterator();

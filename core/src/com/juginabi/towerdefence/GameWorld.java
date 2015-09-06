@@ -37,6 +37,8 @@ public class GameWorld {
     public TextureAtlas entityAtlas;
     // Class for indexing entities in map. Includes helper tools
     private TileWorld tileWorld;
+    // Physics world
+    PhysicsWorld physicsWorld;
 
     public static final int
         TowerCannon = 0,
@@ -46,7 +48,7 @@ public class GameWorld {
         EnemyJesse = 4,
         ProjectileLaser = 5;
 
-    public GameWorld() {
+    public GameWorld(PhysicsWorld physicsWorld) {
         activeList = new Stack<DynamicEntity>();
         activeProjectilesList = new Stack<DynamicEntity>();
         CannonTowers = new Stack<DynamicEntity>();
@@ -56,6 +58,7 @@ public class GameWorld {
         ProjectileLasers = new Stack<DynamicEntity>();
         removedEntities = new Stack<DynamicEntity>();
         tileWorld = new TileWorld(32, 18);
+        this.physicsWorld = physicsWorld;
     }
 
     public void InitializeWorld() {
@@ -98,6 +101,7 @@ public class GameWorld {
                     break;
             }
         } catch (EmptyStackException e) {
+            // This is bound to happen!
             Gdx.app.log(TAG,e.getMessage());
             entity = null;
         }
@@ -109,7 +113,7 @@ public class GameWorld {
         switch (type) {
             case TowerCannon:
             case TowerLaser:
-                entity = new Cannon(this, entityAtlas.findRegion("tankBlack"));
+                entity = new Cannon(this, entityAtlas.findRegion("tankBlack"), physicsWorld);
                 break;
             case EnemyGeek:
                 entity = new PencilNeckedGeek(this, entityAtlas.findRegion("smiley"));
