@@ -69,10 +69,10 @@ public class Cannon extends DynamicEntity {
     }
 
     public void Initialize(float x, float y) {
-        setPosition(x,y);
+        setBounds(x,y, 1,1);
         isAlive_ = true;
-        int tileX = (int)(x / 64f);
-        int tileY = (int)(y / 64f);
+        int tileX = (int)x;
+        int tileY = (int)y;
         GetParentWorld().GetTilesInRange(tileX, tileY, 2, tiles);
     }
 

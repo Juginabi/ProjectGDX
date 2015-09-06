@@ -1,5 +1,6 @@
 package com.juginabi.towerdefence.GameEntities.Monsters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,7 +26,7 @@ public class PencilNeckedGeek extends DynamicEntity {
 
     public PencilNeckedGeek(GameWorld parent, TextureAtlas.AtlasRegion entityTexture) {
         super(parent, entityTexture, GameWorld.EnemyGeek);
-        this.setVelocity(128f);
+        this.setVelocity(1f);
         this.setHitPoints(10f);
         this.setHeading(0,-1);
     }
@@ -38,10 +39,10 @@ public class PencilNeckedGeek extends DynamicEntity {
         C5reached = false;
         C6reached = false;
         C7reached = false;
-        this.setVelocity(500f);
+        this.setVelocity(1f);
         this.setHitPoints(50f);
         this.setHeading(0,-1);
-        this.setPosition(4 * 64f, 17 * 64f);
+        this.setBounds(4, 17, 1, 1);
         isAlive_ = true;
         this.birthTime = TimeUtils.millis();
     }
@@ -57,25 +58,25 @@ public class PencilNeckedGeek extends DynamicEntity {
         if (!isAlive_)
             return false;
         // Move the attacker
-        if (!C1reached && posIsCloseTo(4*64, 3*64, 12)) {
+        if (!C1reached && posIsCloseTo(4, 3, 12)) {
             C1reached = true;
             setHeading(1,0);
-        } else if (!C2reached && posIsCloseTo(11*64, 3*64, 12)) {
+        } else if (!C2reached && posIsCloseTo(11, 3, 12)) {
             C2reached = true;
             setHeading(0,1);
-        } else if (!C3reached && posIsCloseTo(11*64, 13*64, 12)) {
+        } else if (!C3reached && posIsCloseTo(11, 13, 12)) {
             C3reached = true;
             setHeading(1,0);
-        } else if (!C4reached && posIsCloseTo(19*64, 13*64, 12)) {
+        } else if (!C4reached && posIsCloseTo(19, 13, 12)) {
             C4reached = true;
             setHeading(0,-1);
-        } else if (!C5reached && posIsCloseTo(19*64, 3*64, 12)) {
+        } else if (!C5reached && posIsCloseTo(19, 3, 12)) {
             C5reached = true;
             setHeading(1,0);
-        } else if (!C6reached && posIsCloseTo(26*64, 3*64, 12)) {
+        } else if (!C6reached && posIsCloseTo(26, 3, 12)) {
             C6reached = true;
             setHeading(0,1);
-        } else if (!C7reached && posIsCloseTo(26*64, 17*64, 20)) {
+        } else if (!C7reached && posIsCloseTo(26, 17, 20)) {
             C1reached = false;
             C2reached = false;
             C3reached = false;
@@ -83,7 +84,7 @@ public class PencilNeckedGeek extends DynamicEntity {
             C5reached = false;
             C6reached = false;
             C7reached = false;
-            setPosition(4 * 64, 17 * 64);
+            setPosition(4, 17);
             setHeading(0, -1);
         }
         Vector2 heading = this.getHeading();
@@ -102,9 +103,9 @@ public class PencilNeckedGeek extends DynamicEntity {
 
         float distanceX = myPosX - x;
         float distanceY = myPosY - y;
-        double dist = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY,2));
-
-        return dist < distance;
+        float dist = (float) Math.sqrt(distanceX*distanceX + distanceY*distanceY);
+        boolean returnValue = dist < 0.05;
+        return returnValue;
     }
 
     @Override

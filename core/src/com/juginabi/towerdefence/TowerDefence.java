@@ -3,16 +3,17 @@ package com.juginabi.towerdefence;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameEntities.Monsters.JesseMonster;
@@ -95,21 +95,15 @@ public class TowerDefence extends ApplicationAdapter {
         world = new GameWorld();
 
         // Lets create camera
-        cam = new OrthographicCamera();
+        cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
         // Viewport for the camera
-        viewport = new ExtendViewport(1920, 1080, cam);
-        viewport.apply();
         // Set camera position to middle of viewport dimensions
-        cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
-        // Near clipping plane
-        cam.near = 1;
-        // Far clipping plane
-        cam.far = 100;
+        //cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
 
         // Load our level1 TD map
         map = new TmxMapLoader().load("Graphics/Maps/Level1.tmx");
         // Give map to tiledmap renderer
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map, 1/64f);
 
         // Get layers we use at out TD map
         BASE_LAYER = (TiledMapTileLayer) map.getLayers().get("BASE_LAYER");
@@ -176,8 +170,8 @@ public class TowerDefence extends ApplicationAdapter {
             xx = Gdx.input.getX();
             yy = Gdx.input.getY();
 
-            int x = (int)intersectPos.x / 64;
-            int y = (int)intersectPos.y / 64;
+            int x = (int)intersectPos.x ;
+            int y = (int)intersectPos.y;
 
             Gdx.app.log(TAG, "Intersection at location (" + x + ", " + y + ")");
             TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
@@ -200,7 +194,7 @@ public class TowerDefence extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-        Gdx.gl.glClearColor(175/255f,238/255f,238/255f,1);
+        Gdx.gl.glClearColor(0/255f,0/255f,0/255f,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float deltaTime = Gdx.graphics.getRawDeltaTime();
@@ -216,6 +210,8 @@ public class TowerDefence extends ApplicationAdapter {
                 worldInitialized = true;
             }
 
+            Batch batch = renderer.getBatch();
+            batch.setProjectionMatrix(cam.combined);
             SpawnGeek(time);
             SpawnJesse(time);
             // Fill map with cannon towers.
@@ -227,11 +223,11 @@ public class TowerDefence extends ApplicationAdapter {
             world.UpdateWorld(deltaTime);
 
             // Begin batch and start drawing entities and towers to the map
-            renderer.getBatch().begin();
+            batch.begin();
             // Draw the world state using tiledMap Batch
-            world.DrawWorld(renderer.getBatch());
+            world.DrawWorld(batch);
             // End batch
-            renderer.getBatch().end();
+            batch.end();
 
             // Render rest of the tilemap layers
             renderer.render(topLayers);
@@ -281,15 +277,14 @@ public class TowerDefence extends ApplicationAdapter {
 
     private void FillMapWithCannonTowers(long time) {
         if ((time - timeSinceMonstersStarted) > 1000 && spawnMore){
-            for (int x = TILE_WIDTH; x < 64 * MAP_WIDTH; x += 64)
-                for (int y = TILE_HEIGHT; y < 64 * MAP_HEIGHT; y += 64) {
-                    TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x / 64, y / 64);
+            for (int x = 0; x < MAP_WIDTH; ++x )
+                for (int y = 0; y < MAP_HEIGHT; ++y) {
+                    TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
                     if (cell == null) {
-                        DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x/64, y/64);
+                        DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
                         if (cannon != null) {
                             // Entity succesfully created
                             ((Cannon)cannon).Initialize(x,y);
-                            Gdx.app.log(TAG, "Setting tower: " + x + ", " + y);
                             //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
                             //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
                         }
@@ -303,7 +298,10 @@ public class TowerDefence extends ApplicationAdapter {
     public void resize(int width, int height) {
         // Dispose all the assets here and recreate
         Gdx.app.log(TAG, "resize event!");
-        viewport.update(width,height);
+        float aspectRatio = width / (float) height;
+        cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
+        cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2, 0);
+        cam.update();
     }
 
     @Override
