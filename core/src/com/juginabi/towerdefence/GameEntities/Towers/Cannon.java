@@ -41,7 +41,7 @@ public class Cannon extends DynamicEntity {
     private final Color rayColor = Color.WHITE;
 
     // Range of fire
-    private final float rangeOfFire_ = 4*64f;
+    private final float rangeOfFire_ = 4f;
 
     // Target entity
     private DynamicEntity target;
@@ -68,8 +68,9 @@ public class Cannon extends DynamicEntity {
         SetStatusAlive(false);
     }
 
-    public void Initialize(float x, float y) {
-        setBounds(x,y, 1,1);
+    @Override
+    public void initialize(float x, float y) {
+        setBounds(x, y, 1, 1);
         isAlive_ = true;
         int tileX = (int)x;
         int tileY = (int)y;

@@ -183,7 +183,7 @@ public class TowerDefence extends ApplicationAdapter {
                 DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
                 if (cannon != null) {
                     // Entity succesfully created
-                    ((Cannon)cannon).Initialize(x * TILE_WIDTH, y * TILE_HEIGHT);
+                    cannon.initialize(x, y);
                     //cannon.setPosition(x * TILE_WIDTH, y * TILE_HEIGHT);
                     //cannon.SetStatusAlive(true);
                     if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
@@ -213,8 +213,8 @@ public class TowerDefence extends ApplicationAdapter {
 
             Batch batch = renderer.getBatch();
             batch.setProjectionMatrix(cam.combined);
-            SpawnGeek(time);
-            SpawnJesse(time);
+            SpawnEntity(GameWorld.EnemyGeek, 4, 17);
+            SpawnEntity(GameWorld.EnemyJesse, 4, 17);
             // Fill map with cannon towers.
             FillMapWithCannonTowers(time);
             // Render base layers
@@ -248,32 +248,10 @@ public class TowerDefence extends ApplicationAdapter {
         }
 	}
 
-    private void SpawnGeek(long time) {
-        if ((time - timeSinceSpawn) > spawnInterval) {
-            // Spawn another geek
-            DynamicEntity geek = world.SpawnEntity(GameWorld.EnemyGeek, 4, 17);
-            if (geek != null) {
-                ((PencilNeckedGeek)geek).Initialize();
-            }
-            timeSinceSpawn = TimeUtils.millis();
-            //spawnInterval -= 2;
-            //if (spawnInterval < 100)
-            //    spawnInterval = 100;
-        }
-    }
-
-    private void SpawnJesse(long time) {
-        if ((time - timeSinceJesseSpawn) > jesseSpawnInterval) {
-            // Spawn another jesse
-            DynamicEntity jesse = world.SpawnEntity(GameWorld.EnemyJesse, 4, 17);
-            if (jesse != null) {
-                ((JesseMonster)jesse).Initialize();
-            }
-            timeSinceJesseSpawn = TimeUtils.millis();
-            //jesseSpawnInterval -= 1;
-            //if (spawnInterval < 300)
-            //    spawnInterval = 300;
-        }
+    private void SpawnEntity(int type, int x, int y) {
+        DynamicEntity entity = world.SpawnEntity(type, x, y);
+        if (entity != null)
+            entity.initialize(x, y);
     }
 
     private void FillMapWithCannonTowers(long time) {
@@ -285,7 +263,7 @@ public class TowerDefence extends ApplicationAdapter {
                         DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
                         if (cannon != null) {
                             // Entity succesfully created
-                            ((Cannon)cannon).Initialize(x, y);
+                            cannon.initialize(x, y);
                             //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
                             //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
                         }

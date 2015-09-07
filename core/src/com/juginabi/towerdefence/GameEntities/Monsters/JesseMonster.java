@@ -82,7 +82,8 @@ public class JesseMonster extends DynamicEntity {
         return true;
     }
 
-    public void Initialize() {
+    @Override
+    public void initialize(float x, float y) {
         C1reached = false;
         C2reached = false;
         C3reached = false;
@@ -93,7 +94,7 @@ public class JesseMonster extends DynamicEntity {
         this.setVelocity(1f);
         this.setHitPoints(500f);
         this.setHeading(0,-1);
-        this.setBounds(4,17,1,1);
+        this.setBounds(x,y,1,1);
         this.SetStatusAlive(true);
     }
 

@@ -31,7 +31,8 @@ public class PencilNeckedGeek extends DynamicEntity {
         this.setHeading(0,-1);
     }
 
-    public void Initialize() {
+    @Override
+    public void initialize(float x, float y) {
         C1reached = false;
         C2reached = false;
         C3reached = false;
@@ -39,10 +40,10 @@ public class PencilNeckedGeek extends DynamicEntity {
         C5reached = false;
         C6reached = false;
         C7reached = false;
-        this.setVelocity(1f);
+        this.setVelocity(1.5f);
         this.setHitPoints(50f);
         this.setHeading(0,-1);
-        this.setBounds(4, 17, 1, 1);
+        this.setBounds(x, y, 1, 1);
         isAlive_ = true;
         this.birthTime = TimeUtils.millis();
     }
@@ -51,7 +52,7 @@ public class PencilNeckedGeek extends DynamicEntity {
     public boolean Update(float deltaTime) {
         if (getHitPoints() < 0f)
             isAlive_ = false;
-        if (TimeUtils.millis() - birthTime > 10000) {
+        if (TimeUtils.millis() - birthTime > 100000) {
             isAlive_ = false;
             setPosition(-1, -1);
         }

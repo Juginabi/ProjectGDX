@@ -56,6 +56,8 @@ public abstract class DynamicEntity extends Sprite {
         this.heading_.y = y;
     }
 
+    public abstract void initialize(float x, float y);
+
     protected void setVelocity(float newVelocity) {
         this.velocity_ = newVelocity;
     }

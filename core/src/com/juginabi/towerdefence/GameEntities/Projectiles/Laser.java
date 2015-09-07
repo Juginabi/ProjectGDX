@@ -57,6 +57,10 @@ public class Laser extends DynamicEntity {
         return true;
     }
 
+    @Override
+    public void initialize(float x, float y) {
+        setPosition(x, y);
+    }
     public void Draw(Batch batch) {
         if (!isAlive_)
             return;

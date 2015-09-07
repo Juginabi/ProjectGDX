@@ -79,25 +79,35 @@ public class GameWorld {
         try {
             switch (type) {
                 case TowerCannon:
-                    entity = CannonTowers.pop();
-                    tileWorld.InsertEntity(x, y, entity);
+                    if (!CannonTowers.isEmpty()) {
+                        entity = CannonTowers.pop();
+                        tileWorld.InsertEntity(x, y, entity);
+                    }
                     break;
                 case TowerLaser:
-                    entity = LaserTowers.pop();
-                    tileWorld.InsertEntity(x, y, entity);
+                    if (!LaserTowers.isEmpty()) {
+                        entity = LaserTowers.pop();
+                        tileWorld.InsertEntity(x, y, entity);
+                    }
                     break;
                 case EnemyGeek:
-                    entity = EnemyGeeks.pop();
-                    tileWorld.InsertEntity(x, y, entity);
+                    if (!EnemyGeeks.isEmpty()) {
+                        entity = EnemyGeeks.pop();
+                        tileWorld.InsertEntity(x, y, entity);
+                    }
                     //activeList.push(entity);
                     break;
                 case EnemyJesse:
-                    entity = EnemyJesses.pop();
-                    tileWorld.InsertEntity(x, y, entity);
+                    if (!EnemyJesses.isEmpty()) {
+                        entity = EnemyJesses.pop();
+                        tileWorld.InsertEntity(x, y, entity);
+                    }
                     break;
                 case ProjectileLaser:
-                    entity = ProjectileLasers.pop();
-                    activeProjectilesList.push(entity);
+                    if (!ProjectileLasers.isEmpty()) {
+                        entity = ProjectileLasers.pop();
+                        activeProjectilesList.push(entity);
+                    }
                     break;
             }
         } catch (EmptyStackException e) {
