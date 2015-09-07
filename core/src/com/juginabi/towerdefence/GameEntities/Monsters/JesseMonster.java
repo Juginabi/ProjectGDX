@@ -5,8 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameWorld;
+import com.juginabi.towerdefence.TowerDefence;
 
 /**
  * Created by Juginabi on 07.03.2015.
@@ -21,6 +27,8 @@ public class JesseMonster extends DynamicEntity {
     private boolean C5reached = false;
     private boolean C6reached = false;
     private boolean C7reached = false;
+
+    Body physicsBody;
 
     @Override
     public boolean Update(float deltaTime) {
@@ -72,13 +80,13 @@ public class JesseMonster extends DynamicEntity {
                 setHeading(0, -1);
             }
         }
-        Vector2 heading = this.getHeading();
+        /*Vector2 heading = this.getHeading();
         float velocity = this.getVelocity();
         float deltaMovementX = heading.x * velocity * deltaTime;
         float deltaMovementY = heading.y * velocity * deltaTime;
         float x = super.getX();
         float y = super.getY();
-        super.setPosition(x+deltaMovementX, y+deltaMovementY);
+        super.setPosition(x+deltaMovementX, y+deltaMovementY);*/
         return true;
     }
 
@@ -96,6 +104,41 @@ public class JesseMonster extends DynamicEntity {
         this.setHeading(0,-1);
         this.setBounds(x,y,1,1);
         this.SetStatusAlive(true);
+
+        if (physicsBody == null) {
+            // First we create a body definition
+            BodyDef bodyDef = new BodyDef();
+            // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            // Set our body's starting position in the world
+            bodyDef.position.set(x+0.5f, y+0.5f);
+
+            // Create our body in the world using our body definition
+            physicsBody = TowerDefence.physicsWorld_.world_.createBody(bodyDef);
+
+            CircleShape circle = new CircleShape();
+            circle.setRadius(0.5f);
+            FixtureDef fixture = new FixtureDef();
+            fixture.shape = circle;
+            fixture.density = 0.5f;
+            fixture.friction = 0.4f;
+            fixture.restitution = 0.6f; // Make it bounce a little bit
+            physicsBody.createFixture(fixture);
+        }
+        setOriginCenter();
+
+        physicsBody.setUserData(this);
+        //CircleShape circle = new CircleShape();
+        //circle.setRadius(2.5f);
+
+        /*FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = (short) 0xFFFF;
+        fixtureDef.filter.maskBits = (short) 0xFFFF;
+        physicsBody.createFixture(fixtureDef);*/
+
+        //TowerDefence.physicsWorld_.createDynamicBody(4, 17);
     }
 
     public JesseMonster(GameWorld parent, TextureAtlas.AtlasRegion entityTexture) {

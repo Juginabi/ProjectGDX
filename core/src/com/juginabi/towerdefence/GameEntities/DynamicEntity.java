@@ -47,7 +47,7 @@ public abstract class DynamicEntity extends Sprite {
         return this.hitPoints_;
     }
 
-    protected Vector2 getHeading() {
+    public Vector2 getHeading() {
         return this.heading_;
     }
 

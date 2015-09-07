@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -96,7 +97,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld_ = new PhysicsWorld(new Vector2(0, -10), true, true);
+        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, true);
         world = new GameWorld(physicsWorld_);
 
         // Lets create camera
@@ -218,7 +219,7 @@ public class TowerDefence extends ApplicationAdapter {
             Batch batch = renderer.getBatch();
             batch.setProjectionMatrix(cam.combined);
             SpawnEntity(GameWorld.EnemyGeek, 4, 17);
-            SpawnEntity(GameWorld.EnemyJesse, 4, 17);
+            SpawnEntity(GameWorld.EnemyJesse, 4, 14);
             // Fill map with cannon towers.
             //FillMapWithCannonTowers(time);
             // Render base layers
@@ -227,6 +228,16 @@ public class TowerDefence extends ApplicationAdapter {
             // Update the world state
             world.UpdateWorld(deltaTime);
 
+            Array<Body> bodies = new Array<Body>();
+            physicsWorld_.world_.getBodies(bodies);
+            for (Body b : bodies) {
+                DynamicEntity entity = (DynamicEntity) b.getUserData();
+                if (entity != null) {
+                    b.applyLinearImpulse(entity.getHeading(), b.getWorldCenter(), true);
+                    entity.setPosition(b.getPosition().x - entity.getWidth() / 2, b.getPosition().y - entity.getHeight() / 2);
+                    entity.setRotation(MathUtils.radiansToDegrees * b.getAngle());
+                }
+            }
             // Begin batch and start drawing entities and towers to the map
             batch.begin();
             // Draw the world state using tiledMap Batch
@@ -234,11 +245,10 @@ public class TowerDefence extends ApplicationAdapter {
             // End batch
             batch.end();
 
+            physicsWorld_.render(cam);
             // Render rest of the tilemap layers
             renderer.render(topLayers);
-
             physicsWorld_.doPhysicsStep(deltaTime);
-            physicsWorld_.render(cam);
             if (physicsWorld_.world_.getContactCount() > 0) {
                 Array<Contact> list = physicsWorld_.world_.getContactList();
                 for (Contact c : list) {

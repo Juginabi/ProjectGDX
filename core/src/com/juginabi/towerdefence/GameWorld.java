@@ -64,7 +64,7 @@ public class GameWorld {
     public void InitializeWorld() {
         entityAtlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
         int i = 0;
-        while (i != 500) {
+        while (i != 10) {
             CreateEntity(TowerCannon);
             CreateEntity(EnemyJesse);
             CreateEntity(EnemyGeek);
