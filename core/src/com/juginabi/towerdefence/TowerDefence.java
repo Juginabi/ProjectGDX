@@ -24,6 +24,8 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
@@ -76,6 +78,7 @@ public class TowerDefence extends ApplicationAdapter {
     private EventHandler event = null;
     private static AssetManager manager;
     private GameWorld world;
+    public static PhysicsWorld physicsWorld_;
 
     private boolean worldInitialized = false;
 
@@ -93,7 +96,8 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        world = new GameWorld(new PhysicsWorld(new Vector2(0, -10), true, true));
+        physicsWorld_ = new PhysicsWorld(new Vector2(0, -10), true, true);
+        world = new GameWorld(physicsWorld_);
 
         // Lets create camera
         cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
@@ -216,7 +220,7 @@ public class TowerDefence extends ApplicationAdapter {
             SpawnEntity(GameWorld.EnemyGeek, 4, 17);
             SpawnEntity(GameWorld.EnemyJesse, 4, 17);
             // Fill map with cannon towers.
-            FillMapWithCannonTowers(time);
+            //FillMapWithCannonTowers(time);
             // Render base layers
             renderer.render(groundLayers);
 
@@ -232,6 +236,15 @@ public class TowerDefence extends ApplicationAdapter {
 
             // Render rest of the tilemap layers
             renderer.render(topLayers);
+
+            physicsWorld_.doPhysicsStep(deltaTime);
+            physicsWorld_.render(cam);
+            if (physicsWorld_.world_.getContactCount() > 0) {
+                Array<Contact> list = physicsWorld_.world_.getContactList();
+                for (Contact c : list) {
+                    Gdx.app.log("beginContact", "between " + c.getFixtureA().toString() + " and " + c.getFixtureB().toString());
+                }
+            }
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);

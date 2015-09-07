@@ -7,8 +7,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**
@@ -36,6 +39,28 @@ boolean debugRenderingEnabled_ = false;
             debugRenderer_ = new Box2DDebugRenderer();
             debugRenderingEnabled_ = true;
         }
+
+        world_.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
     }
 
     public void setVelocityIterations(int iterations) {
@@ -76,7 +101,7 @@ boolean debugRenderingEnabled_ = false;
 
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.25f);
+        circle.setRadius(0.5f);
 
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
@@ -86,7 +111,7 @@ boolean debugRenderingEnabled_ = false;
         fixtureDef.restitution = 0.6f; // Make it bounce a little bit
 
         // Create our fixture and attach it to the body
-        Fixture fixture = body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef);
 
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.

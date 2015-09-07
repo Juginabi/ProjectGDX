@@ -7,6 +7,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameWorld;
@@ -45,6 +51,7 @@ public class Cannon extends DynamicEntity {
 
     // Target entity
     private DynamicEntity target;
+    private Body physicsBody;
 
     List<TileWorld.Tile> tiles;
 
@@ -75,6 +82,36 @@ public class Cannon extends DynamicEntity {
         int tileX = (int)x;
         int tileY = (int)y;
         GetParentWorld().GetTilesInRange(tileX, tileY, 2, tiles);
+
+        if (physicsBody == null) {
+            // First we create a body definition
+            BodyDef bodyDef = new BodyDef();
+            // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            // Set our body's starting position in the world
+            bodyDef.position.set(x+0.5f, y+0.5f);
+
+            // Create our body in the world using our body definition
+            physicsBody = TowerDefence.physicsWorld_.world_.createBody(bodyDef);
+
+            PolygonShape box = new PolygonShape();
+            box.setAsBox(0.475f, 0.475f);
+            FixtureDef fixture = new FixtureDef();
+            fixture.shape = box;
+            physicsBody.createFixture(fixture);
+        }
+
+        CircleShape circle = new CircleShape();
+        circle.setRadius(2.5f);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = (short) 0xFFFF;
+        fixtureDef.filter.maskBits = (short) 0xFFFF;
+        physicsBody.createFixture(fixtureDef);
+
+        TowerDefence.physicsWorld_.createDynamicBody(4,17);
     }
 
     public float GetRangeOfFire() {
