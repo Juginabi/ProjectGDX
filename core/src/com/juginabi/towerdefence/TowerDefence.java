@@ -3,8 +3,6 @@ package com.juginabi.towerdefence;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,8 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -25,14 +21,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
-import com.juginabi.towerdefence.GameEntities.Monsters.JesseMonster;
-import com.juginabi.towerdefence.GameEntities.Monsters.PencilNeckedGeek;
-import com.juginabi.towerdefence.GameEntities.Towers.Cannon;
 
 public class TowerDefence extends ApplicationAdapter {
     private BitmapFont font;
@@ -65,8 +57,8 @@ public class TowerDefence extends ApplicationAdapter {
     // Map width/height properties
     private final int TILE_WIDTH = 64;
     private final int TILE_HEIGHT = 64;
-    private final int MAP_WIDTH = 32;
-    private final int MAP_HEIGHT = 18;
+    private final int MAP_WIDTH = 16;
+    private final int MAP_HEIGHT = 9;
 
     private long timeSinceSpawn;
     private long spawnInterval;
@@ -77,7 +69,7 @@ public class TowerDefence extends ApplicationAdapter {
 
     // Handles all input events
     private EventHandler event = null;
-    private static AssetManager manager;
+    public static AssetManager manager;
     private GameWorld world;
     public static PhysicsWorld physicsWorld_;
 
@@ -97,7 +89,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, true);
+        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, false);
         world = new GameWorld(physicsWorld_);
 
         // Lets create camera
@@ -136,8 +128,8 @@ public class TowerDefence extends ApplicationAdapter {
         FileHandle[] files = Gdx.files.internal("Audio").list();
         for (FileHandle fi : files)
             Gdx.app.log(TAG, fi.name());
-        manager.load("Audio/threeTone2.ogg", Sound.class);
-        manager.load("Audio/defaultlaser.ogg", Sound.class);
+        //manager.load("Audio/threeTone2.ogg", Sound.class);
+        //manager.load("Audio/defaultlaser.ogg", Sound.class);
     }
 
     public void moveCamera () {
@@ -191,8 +183,8 @@ public class TowerDefence extends ApplicationAdapter {
                     cannon.initialize(x, y);
                     //cannon.setPosition(x * TILE_WIDTH, y * TILE_HEIGHT);
                     //cannon.SetStatusAlive(true);
-                    if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
-                        manager.get("Audio/threeTone2.ogg", Sound.class).play();
+                    //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
+                    //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
                 }
             }
         }
@@ -218,8 +210,15 @@ public class TowerDefence extends ApplicationAdapter {
 
             Batch batch = renderer.getBatch();
             batch.setProjectionMatrix(cam.combined);
-            SpawnEntity(GameWorld.EnemyGeek, 4, 17);
-            SpawnEntity(GameWorld.EnemyJesse, 4, 14);
+            if (time - timeSinceJesseSpawn > 1000) {
+                SpawnEntity(GameWorld.EnemyJesse, 4, 9);
+                timeSinceJesseSpawn = time;
+            }
+
+            if (time - timeSinceSpawn > 2000) {
+                SpawnEntity(GameWorld.EnemyGeek, 4, 9);
+                timeSinceSpawn = time;
+            }
             // Fill map with cannon towers.
             //FillMapWithCannonTowers(time);
             // Render base layers
@@ -233,7 +232,7 @@ public class TowerDefence extends ApplicationAdapter {
             for (Body b : bodies) {
                 DynamicEntity entity = (DynamicEntity) b.getUserData();
                 if (entity != null) {
-                    b.applyLinearImpulse(entity.getHeading(), b.getWorldCenter(), true);
+                    b.applyForce(entity.getHeading().limit(0.5f), b.getWorldCenter(), true);
                     entity.setPosition(b.getPosition().x - entity.getWidth() / 2, b.getPosition().y - entity.getHeight() / 2);
                     entity.setRotation(MathUtils.radiansToDegrees * b.getAngle());
                 }
@@ -249,12 +248,16 @@ public class TowerDefence extends ApplicationAdapter {
             // Render rest of the tilemap layers
             renderer.render(topLayers);
             physicsWorld_.doPhysicsStep(deltaTime);
-            if (physicsWorld_.world_.getContactCount() > 0) {
+            /*if (physicsWorld_.world_.getContactCount() > 0) {
                 Array<Contact> list = physicsWorld_.world_.getContactList();
                 for (Contact c : list) {
-                    Gdx.app.log("beginContact", "between " + c.getFixtureA().toString() + " and " + c.getFixtureB().toString());
+                    DynamicEntity entity = (DynamicEntity)c.getFixtureA().getBody().getUserData();
+                    if (entity != null)
+                    {
+
+                    }
                 }
-            }
+            }*/
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);

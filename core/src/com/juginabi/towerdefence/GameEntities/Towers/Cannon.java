@@ -107,11 +107,9 @@ public class Cannon extends DynamicEntity {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
-        fixtureDef.filter.categoryBits = (short) 0xFFFF;
-        fixtureDef.filter.maskBits = (short) 0xFFFF;
-        physicsBody.createFixture(fixtureDef);
-
-        TowerDefence.physicsWorld_.createDynamicBody(4,17);
+        fixtureDef.filter.categoryBits = (short) 0x01;
+        fixtureDef.filter.maskBits = (short) 0x02;
+        Fixture fix = physicsBody.createFixture(fixtureDef);
     }
 
     public float GetRangeOfFire() {

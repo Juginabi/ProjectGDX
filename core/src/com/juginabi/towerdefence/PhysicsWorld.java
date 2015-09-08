@@ -2,6 +2,8 @@ package com.juginabi.towerdefence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,11 +15,13 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 
 /**
  * Created by Jukka on 21.8.2015.
  */
 public class PhysicsWorld {
+    public static final String TAG = "PhysicsWorld";
     // PhysicsWorld
     public World world_;
 
@@ -43,12 +47,49 @@ boolean debugRenderingEnabled_ = false;
         world_.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-
+                DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
+                if (e != null) {
+                    TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
+                    Sprite sprite = new Sprite(atlas.findRegion("smiley"));
+                    sprite.setBounds(e.getX(), e.getY(), 1,1);
+                    sprite.setRotation(e.getRotation());
+                    sprite.setOriginCenter();
+                    e.set(sprite);
+                } else {
+                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
+                    if (e != null) {
+                        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
+                        Sprite sprite = new Sprite(atlas.findRegion("smiley"));
+                        sprite.setBounds(e.getX(), e.getY(), 1,1);
+                        sprite.setRotation(e.getRotation());
+                        sprite.setOriginCenter();
+                        e.set(sprite);
+                    }
+                }
             }
 
             @Override
             public void endContact(Contact contact) {
-
+                DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
+                if (e != null) {
+                    TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
+                    Sprite sprite = new Sprite(atlas.findRegion("jesseMonster"));
+                    sprite.setBounds(e.getX(), e.getY(), 1,1);
+                    sprite.setRotation(e.getRotation());
+                    sprite.setOriginCenter();
+                    e.set(sprite);
+                } else {
+                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
+                    if (e != null) {
+                        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
+                        Sprite sprite = new Sprite(atlas.findRegion("jesseMonster"));
+                        sprite.setBounds(e.getX(), e.getY(), 1,1);
+                        sprite.setRotation(e.getRotation());
+                        sprite.setOriginCenter();
+                        e.set(sprite);
+                        e.set(sprite);
+                    }
+                }
             }
 
             @Override

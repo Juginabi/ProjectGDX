@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="32" height="18" tilewidth="64" tileheight="64" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="16" height="9" tilewidth="64" tileheight="64" nextobjectid="1">
  <tileset firstgid="1" name="RPGpack" tilewidth="64" tileheight="64">
   <image source="RPGpack_sheet.png" width="1280" height="832"/>
   <terraintypes>
@@ -111,29 +111,29 @@
    </properties>
   </tile>
  </tileset>
- <layer name="BASE_LAYER1" width="32" height="18">
+ <layer name="BASE_LAYER1" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJzNVVsOwjAMC68jEECcgEfvfz2KtAjPc9pV8EEkC7GlcZxkqdnHThXXiqP91npxywT0e//36fc5ocBzh+fKD30wbvigxXn2i5huy3zc5hzF5vlhPqyrEH/m5+C/r7ivwEHkzbpc6PeO/njXA9Z4LX9oVfq5h5uKrcBO1JhzR12sn+vf6yHOgNKY6Q9dPX7ufys+a2RjXczf0qj4MS/1vsUfcZmfNeB3pXrolte4p1/xZzWOfFVvsvxG9WdzgjxqhtHnW341/7hjVW44I6369PYv1/hmy732sGUPsUejZ9E4xsh+Gz2r9n/oP5vebYjszltz9gL5sn6+23j+mQ9nv3U34hms17/YC/EbNug=
+   eJyFkIEKgDAIRKV/yIq+oHL//3s5MLJLnfAYone3jeitRdmVmf5VzZrhd3rPdgrM2BDTc6AXp+Vg9niQ9Zjh89GbQc9JRpaP+hbsNPq+c5Tvdw7lBK7EO9JXVP+3KtOADe5/Ay/5DZU=
   </data>
  </layer>
- <layer name="BASE_LAYER2" width="32" height="18">
+ <layer name="BASE_LAYER2" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJxjYEAAFTSaWoBa5qrgYONSQ2u78NlL67CkhdnY7CHHDlr5nZ6AWuFMD71qFNhBib20sh/ZDSoMhN1DC/tJAbSynxi/08p+QvYKImFcemlRFo8C1LDHFQejgDgAABF4Bcc=
+   eJxjYBgFo4B8AAACQAAB
   </data>
  </layer>
- <layer name="BUILD_LAYER" width="32" height="18">
+ <layer name="BUILD_LAYER" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJzNlEkOwjAMRb1nOkAXTEcAliCGMwA3BXoN9lXUm/ArJcJYcULSUvGlpw6O/2+TNmMiWoMNqEBhjyt7vy2Nr7G+hvlOwAzM6VMF6TLsvFLGaPel7zSSz30MxSXHuGvnk5qvqVLOY0rNl8/vajF4jxG9Kfk+xeYmpTdn/XPy26y/XF9eO4AjOHnqAzC0jDLya/LLedzAGVzAFTxE3Xlz/9zvr3kWOYdPCr9/F/k+afnlj/KbOZD/n9MObMHeU+d79yYz37e3cI8yUO/6/68DtXukNyc/tr+FMr7t1fL70r/kL+i9V/XJ0ua/ABfhO7Y=
+   eJzjY2BgMAFiUyC+C8TSUNoYKg6TY4DKMaDJKTKgAmkG3ACb3Kh+6uvHhwnpJxUAAE/ZBvc=
   </data>
  </layer>
- <layer name="TOP_LAYER" width="32" height="18">
+ <layer name="TOP_LAYER" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJxjYCAenEZin8ShBpc4qQDZnNM4VeFWA+NTyz0wcBIHm9qAEvfD9BATboMVkBr/xJhDTb0tQDwbiFspMB8XOEuEmhlQ+2fSwH4QgIU5yC3YwgFk/3oa2k8IrAHi/UC8loZ2gMKAlnkcHyBk7yEg/g+lcemlVv4nJj2OJPAYDX8fWOeMAgoAAA+TJIs=
+   eJxjYBgFo4B8AAACQAAB
   </data>
  </layer>
- <layer name="OBJECTIVE_LAYER" width="32" height="18">
+ <layer name="OBJECTIVE_LAYER" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJxjYEAFZgy0AeY0MncUjIJRMApGwSgYBaOAVAAAxHUAbg==
+   eJxjYEAFZgyjYBQQDwB4YAA3
   </data>
  </layer>
 </map>

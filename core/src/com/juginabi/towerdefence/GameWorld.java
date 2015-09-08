@@ -1,12 +1,11 @@
 package com.juginabi.towerdefence;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameEntities.Monsters.JesseMonster;
-import com.juginabi.towerdefence.GameEntities.Monsters.PencilNeckedGeek;
+import com.juginabi.towerdefence.GameEntities.Monsters.NaziSoldier;
 import com.juginabi.towerdefence.GameEntities.Projectiles.Laser;
 import com.juginabi.towerdefence.GameEntities.Towers.Cannon;
 
@@ -126,7 +125,7 @@ public class GameWorld {
                 entity = new Cannon(this, entityAtlas.findRegion("tankBlack"));
                 break;
             case EnemyGeek:
-                entity = new PencilNeckedGeek(this, entityAtlas.findRegion("smiley"));
+                entity = new NaziSoldier(this, entityAtlas.findRegion("smiley"));
                 break;
             case EnemyJesse:
                 entity = new JesseMonster(this, entityAtlas.findRegion("jesseMonster"));
