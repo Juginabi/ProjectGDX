@@ -18,8 +18,8 @@ import com.juginabi.towerdefence.TowerDefence;
  * Removed requirement of spritebatch through static method. Uses Batch from TiledMapRenderer or whatnot.
  * Changed origins of mid and end sections of lasers so rotation now revolves around begin1 origin accurately.
  */
-public class Laser extends DynamicEntity {
-    private Vector2 position;
+public class Laser /*extends DynamicEntity*/ {
+    /*private Vector2 position;
     private float distance;
     private Color beamColor;
     private Color rayColor;
@@ -157,5 +157,5 @@ public class Laser extends DynamicEntity {
 
     public void resetTotalTime() {
         this.totalTime = 0f;
-    }
+    }*/
 }

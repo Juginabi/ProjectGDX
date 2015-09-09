@@ -19,8 +19,8 @@ import com.juginabi.towerdefence.TowerDefence;
 /**
  * Created by Juginabi on 07.03.2015.
  */
-public class JesseMonster extends DynamicEntity {
-    private static String TAG = "JesseMonster";
+public class JesseMonster /*extends DynamicEntity*/ {
+    /*private static String TAG = "JesseMonster";
 
     private boolean C1reached = false;
     private boolean C2reached = false;
@@ -97,7 +97,7 @@ public class JesseMonster extends DynamicEntity {
                 setHeading(1, 0);
                 isAlive_ = false;
             }
-        } /*else if (!C4reached) {
+        } else if (!C4reached) {
             if (posIsCloseTo(19, 13, 12)) {
                 C4reached = true;
                 Vector2 vec = physicsBody.getLinearVelocity();
@@ -145,7 +145,7 @@ public class JesseMonster extends DynamicEntity {
                 physicsBody = null;
                 isAlive_ = false;
             }
-        }*/
+        }
         stateTime += deltaTime;
         if (getHeading().x != 0) {
             if (getHeading().x > 0) {
@@ -175,9 +175,7 @@ public class JesseMonster extends DynamicEntity {
         this.setVelocity(1f);
         this.setHitPoints(500f);
         this.setHeading(0, -1);
-        this.setBounds(x, y, 1, 1);
         this.scale(0.5f);
-        this.setOriginCenter();
         this.SetStatusAlive(true);
 
         if (physicsBody == null) {
@@ -202,7 +200,6 @@ public class JesseMonster extends DynamicEntity {
             fixture.filter.maskBits = 0x01;
             physicsBody.createFixture(fixture);
         }
-        setOriginCenter();
         physicsBody.setLinearDamping(0.2f);
         physicsBody.setUserData(this);
     }
@@ -268,5 +265,5 @@ public class JesseMonster extends DynamicEntity {
             return;
         this.setRegion(currentFrame);
         super.draw(batch);
-    }
+    }*/
 }

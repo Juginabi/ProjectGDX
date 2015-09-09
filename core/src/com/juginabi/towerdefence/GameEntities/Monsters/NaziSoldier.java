@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Jukka on 3.3.2015.
  */
-public class NaziSoldier extends DynamicEntity {
-    private boolean C1reached = false;
+public class NaziSoldier /*extends DynamicEntity*/ {
+    /*private boolean C1reached = false;
     private boolean C2reached = false;
     private boolean C3reached = false;
     private boolean C4reached = false;
@@ -135,7 +135,7 @@ public class NaziSoldier extends DynamicEntity {
             C2reached = false;
             C3reached = false;
             setHeading(0, -1);
-        }/* else if (!C4reached && posIsCloseTo(19, 13, 12)) {
+        } else if (!C4reached && posIsCloseTo(19, 13, 12)) {
             C4reached = true;
             setHeading(0,-1);
         } else if (!C5reached && posIsCloseTo(19, 3, 12)) {
@@ -154,7 +154,7 @@ public class NaziSoldier extends DynamicEntity {
             C7reached = false;
             setPosition(4, 17);
             setHeading(0, -1);
-        }*/
+        }
         Vector2 heading = this.getHeading();
         float velocity = this.getVelocity();
         float deltaMovementX = heading.x * velocity * deltaTime;
@@ -198,5 +198,5 @@ public class NaziSoldier extends DynamicEntity {
             return;
         this.setRegion(currentFrame);
         super.draw(batch);
-    }
+    }*/
 }

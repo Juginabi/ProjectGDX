@@ -1,9 +1,12 @@
 package com.juginabi.towerdefence;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
+import com.juginabi.towerdefence.GameEntities.EntityInitializer;
 import com.juginabi.towerdefence.GameEntities.Monsters.JesseMonster;
 import com.juginabi.towerdefence.GameEntities.Monsters.NaziSoldier;
 import com.juginabi.towerdefence.GameEntities.Projectiles.Laser;
@@ -29,6 +32,7 @@ public class GameWorld {
     private Stack<DynamicEntity> LaserTowers;
     private Stack<DynamicEntity> EnemyGeeks;
     private Stack<DynamicEntity> EnemyJesses;
+    private Stack<DynamicEntity> Enemies;
     private Stack<DynamicEntity> ProjectileLasers;
     // List for entities which are to be removed from map
     private List<DynamicEntity> removedEntities;
@@ -52,6 +56,7 @@ public class GameWorld {
         activeProjectilesList = new Stack<DynamicEntity>();
         CannonTowers = new Stack<DynamicEntity>();
         LaserTowers = new Stack<DynamicEntity>();
+        Enemies = new Stack<DynamicEntity>();
         EnemyGeeks = new Stack<DynamicEntity>();
         EnemyJesses = new Stack<DynamicEntity>();
         ProjectileLasers = new Stack<DynamicEntity>();
@@ -64,10 +69,9 @@ public class GameWorld {
         entityAtlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
         int i = 0;
         while (i != 10) {
-            CreateEntity(TowerCannon);
-            CreateEntity(EnemyJesse);
-            CreateEntity(EnemyGeek);
-            CreateEntity(ProjectileLaser);
+            EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
+            //CreateEntity(TowerCannon);
+            CreateEntity(DynamicEntity.ID_ENEMY_NAZI, initializer);
             ++i;
         }
     }
@@ -75,6 +79,18 @@ public class GameWorld {
     public DynamicEntity SpawnEntity(int type, int x, int y) {
         // This is either enemy or defender
         DynamicEntity entity = null;
+        switch (type) {
+            case DynamicEntity.ID_ENEMY_NAZI:
+                if (!Enemies.isEmpty()) {
+                    entity = Enemies.pop();
+                    entity.initialize(new Vector2(x,y));
+                    tileWorld.InsertEntity(x, y, entity);
+                    return entity;
+                }
+                    break;
+            case DynamicEntity.ID_ENEMY_SPEARMAN:
+                break;
+        }
         try {
             switch (type) {
                 case TowerCannon:
@@ -117,17 +133,14 @@ public class GameWorld {
         return entity;
     }
 
-    DynamicEntity CreateEntity(int type) {
+    DynamicEntity CreateEntity(int type, EntityInitializer initializer) {
         DynamicEntity entity = null;
         switch (type) {
-            case TowerCannon:
-            case TowerLaser:
-                entity = new Cannon(this, entityAtlas.findRegion("tankBlack"));
+            case DynamicEntity.ID_ENEMY_NAZI:
+                entity = new DynamicEntity(this, initializer);
+                //entity = new NaziSoldier(this, entityAtlas.findRegion("smiley"));
                 break;
-            case EnemyGeek:
-                entity = new NaziSoldier(this, entityAtlas.findRegion("smiley"));
-                break;
-            case EnemyJesse:
+            /*case EnemyJesse:
                 entity = new JesseMonster(this, entityAtlas.findRegion("jesseMonster"));
                 break;
             case ProjectileLaser:
@@ -135,7 +148,7 @@ public class GameWorld {
                         entityAtlas.findRegion("beammid1"), entityAtlas.findRegion("beammid2"),
                         entityAtlas.findRegion("beamend1"), entityAtlas.findRegion("beamend2")};
                 entity = new Laser(this, laserRegions);
-                break;
+                break;*/
             default:
                 Gdx.app.log(TAG, "Unable to create entity!");
         }
@@ -144,17 +157,8 @@ public class GameWorld {
                 case TowerCannon:
                     CannonTowers.push(entity);
                     break;
-                case TowerLaser:
-                    LaserTowers.push(entity);
-                    break;
-                case EnemyGeek:
-                    EnemyGeeks.push(entity);
-                    break;
-                case EnemyJesse:
-                    EnemyJesses.push(entity);
-                    break;
-                case ProjectileLaser:
-                    ProjectileLasers.push(entity);
+                case DynamicEntity.ID_ENEMY_NAZI:
+                    Enemies.push(entity);
                     break;
             }
         }
@@ -165,7 +169,7 @@ public class GameWorld {
         Stack<DynamicEntity> deadStack = new Stack<DynamicEntity>();
         tileWorld.Update(tickMilliseconds, deadStack);
         DynamicEntity deadEntity = null;
-        while (!deadStack.isEmpty()) {
+        /*while (!deadStack.isEmpty()) {
             deadEntity = deadStack.pop();
             switch (deadEntity.getType()) {
                 case TowerCannon:
@@ -181,7 +185,7 @@ public class GameWorld {
                     EnemyJesses.push(deadEntity);
                     break;
             }
-        }
+        }*/
         /*Iterator it = activeList.iterator();
         while (it.hasNext()) {
             DynamicEntity entity = (DynamicEntity) it.next();
@@ -240,7 +244,7 @@ public class GameWorld {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);*/
     }
 
-    public DynamicEntity GetClosestEnemy(DynamicEntity tower) {
+    /*public DynamicEntity GetClosestEnemy(DynamicEntity tower) {
         DynamicEntity closestEntity = null;
         float range = ((Cannon) tower).GetRangeOfFire();
         float closestRange = range+1;
@@ -267,5 +271,5 @@ public class GameWorld {
         }
 
         return closestEntity;
-    }
+    }*/
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -128,7 +129,8 @@ public class TowerDefence extends ApplicationAdapter {
         FileHandle[] files = Gdx.files.internal("Audio").list();
         for (FileHandle fi : files)
             Gdx.app.log(TAG, fi.name());
-        //manager.load("Audio/threeTone2.ogg", Sound.class);
+        manager.load("Graphics/topdown-nazi.png", Texture.class);
+        manager.load("Graphics/topdown1.png", Texture.class);
         //manager.load("Audio/defaultlaser.ogg", Sound.class);
     }
 
@@ -173,7 +175,7 @@ public class TowerDefence extends ApplicationAdapter {
 
             Gdx.app.log(TAG, "Intersection at location (" + x + ", " + y + ")");
             TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
-            if (cell != null) {
+            /*if (cell != null) {
                 Gdx.app.log(TAG, "Something here!");
             }
             else {
@@ -186,7 +188,7 @@ public class TowerDefence extends ApplicationAdapter {
                     //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
                     //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
                 }
-            }
+            }*/
         }
     }
 
@@ -211,13 +213,9 @@ public class TowerDefence extends ApplicationAdapter {
             Batch batch = renderer.getBatch();
             batch.setProjectionMatrix(cam.combined);
             if (time - timeSinceJesseSpawn > 1000) {
-                SpawnEntity(GameWorld.EnemyJesse, 4, 9);
+                Gdx.app.log(TAG, "Spawn");
+                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 4);
                 timeSinceJesseSpawn = time;
-            }
-
-            if (time - timeSinceSpawn > 2000) {
-                SpawnEntity(GameWorld.EnemyGeek, 4, 9);
-                timeSinceSpawn = time;
             }
             // Fill map with cannon towers.
             //FillMapWithCannonTowers(time);
@@ -229,14 +227,14 @@ public class TowerDefence extends ApplicationAdapter {
 
             Array<Body> bodies = new Array<Body>();
             physicsWorld_.world_.getBodies(bodies);
-            for (Body b : bodies) {
+            /*for (Body b : bodies) {
                 DynamicEntity entity = (DynamicEntity) b.getUserData();
                 if (entity != null) {
                     b.applyForce(entity.getHeading().limit(0.5f), b.getWorldCenter(), true);
                     entity.setPosition(b.getPosition().x - entity.getWidth() / 2, b.getPosition().y - entity.getHeight() / 2);
                     entity.setRotation(MathUtils.radiansToDegrees * b.getAngle());
                 }
-            }
+            }*/
             // Begin batch and start drawing entities and towers to the map
             batch.begin();
             // Draw the world state using tiledMap Batch
@@ -276,11 +274,9 @@ public class TowerDefence extends ApplicationAdapter {
 
     private void SpawnEntity(int type, int x, int y) {
         DynamicEntity entity = world.SpawnEntity(type, x, y);
-        if (entity != null)
-            entity.initialize(x, y);
     }
 
-    private void FillMapWithCannonTowers(long time) {
+    /*private void FillMapWithCannonTowers(long time) {
         if ((time - timeSinceMonstersStarted) > 1000 && spawnMore){
             for (int x = 0; x < MAP_WIDTH; ++x )
                 for (int y = 0; y < MAP_HEIGHT; ++y) {
@@ -297,7 +293,7 @@ public class TowerDefence extends ApplicationAdapter {
                 }
             spawnMore = false;
         }
-    }
+    }*/
 
     @Override
     public void resize(int width, int height) {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Monsters>
+   <Level1>
+      <Wave1>
+         <Stats id="1" name="Nazi" hitpoints="2" velocity="1" invisible="false" flying="false" />
+      </Wave1>
+      <Wave2>
+         <Stats id="2" name="Kari" hitpoints="10" velocity="2" invisible="true" flying="true" />
+      </Wave2>
+   </Level1>
+   <Level2>
+      <Wave1>
+         <Stats id="3" name="Jukka" hitpoints="100" velocity="3" invisible="true" flying="false" />
+      </Wave1>
+   </Level2>
+</Monsters>

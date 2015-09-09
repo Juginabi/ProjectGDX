@@ -9,8 +9,8 @@ import com.juginabi.towerdefence.GameWorld;
 /**
  * Created by Jukka on 7.9.2015.
  */
-public class realMonster extends DynamicEntity {
-    public float velocity;
+public class realMonster /*extends DynamicEntity*/ {
+    /*public float velocity;
     public int hitpoints;
 
     protected realMonster(GameWorld parent, TextureAtlas.AtlasRegion region, int type) {
@@ -30,5 +30,5 @@ public class realMonster extends DynamicEntity {
     @Override
     public void Draw(Batch batch) {
 
-    }
+    }*/
 }

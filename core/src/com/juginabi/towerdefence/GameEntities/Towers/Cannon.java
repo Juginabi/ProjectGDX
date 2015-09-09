@@ -27,9 +27,9 @@ import java.util.List;
 /**
  * Created by Juginabi on 03.03.2015.
  */
-public class Cannon extends DynamicEntity {
+public class Cannon /*extends DynamicEntity*/ {
     // Tag for logging purposes
-    private static String TAG = "Cannon";
+    /*private static String TAG = "Cannon";
 
     // Last reload time. This controls how ofter this entity fires the weapon
     private double timeSinceLastFire = 0;
@@ -162,7 +162,7 @@ public class Cannon extends DynamicEntity {
             if (manager.isLoaded("Audio/defaultlaser.ogg"))
                 fireSound = manager.get("Audio/defaultlaser.ogg");
         }
-        /*Laser laser = (Laser) GetParentWorld().SpawnEntity(GameWorld.ProjectileLaser);
+        Laser laser = (Laser) GetParentWorld().SpawnEntity(GameWorld.ProjectileLaser);
         if (laser != null) {
             laser.resetTotalTime();
             float lifetime = reloadTime / 2500f;
@@ -174,7 +174,7 @@ public class Cannon extends DynamicEntity {
             laser.setDistance(distance);
             laser.setDegrees(getDegrees(target.getX(), target.getY(), distance));
             laser.SetStatusAlive(true);
-        }*/
+        }
         if (target.inflictDamage(damage))
             target = null;
     }
@@ -208,5 +208,5 @@ public class Cannon extends DynamicEntity {
             double degrees = rad*180/Math.PI;
             return (float)(270 - degrees);
         }
-    }
+    }*/
 }
