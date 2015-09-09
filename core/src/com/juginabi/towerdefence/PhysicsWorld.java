@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
@@ -49,47 +50,17 @@ boolean debugRenderingEnabled_ = false;
             public void beginContact(Contact contact) {
                 DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
                 if (e != null) {
-                    TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
-                    Sprite sprite = new Sprite(atlas.findRegion("smiley"));
-                    sprite.setBounds(e.getX(), e.getY(), 1,1);
-                    sprite.setRotation(e.getRotation());
-                    sprite.setOriginCenter();
-                    e.set(sprite);
+                    e.heading = (Vector2)contact.getFixtureB().getUserData();
                 } else {
-                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
-                    if (e != null) {
-                        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
-                        Sprite sprite = new Sprite(atlas.findRegion("smiley"));
-                        sprite.setBounds(e.getX(), e.getY(), 1,1);
-                        sprite.setRotation(e.getRotation());
-                        sprite.setOriginCenter();
-                        e.set(sprite);
-                    }
+                    DynamicEntity ent = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
+                    ent.heading = (Vector2)contact.getFixtureA().getUserData();
                 }
             }
 
             @Override
             public void endContact(Contact contact) {
                 DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
-                if (e != null) {
-                    TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
-                    Sprite sprite = new Sprite(atlas.findRegion("jesseMonster"));
-                    sprite.setBounds(e.getX(), e.getY(), 1,1);
-                    sprite.setRotation(e.getRotation());
-                    sprite.setOriginCenter();
-                    e.set(sprite);
-                } else {
-                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
-                    if (e != null) {
-                        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
-                        Sprite sprite = new Sprite(atlas.findRegion("jesseMonster"));
-                        sprite.setBounds(e.getX(), e.getY(), 1,1);
-                        sprite.setRotation(e.getRotation());
-                        sprite.setOriginCenter();
-                        e.set(sprite);
-                        e.set(sprite);
-                    }
-                }
+
             }
 
             @Override
@@ -102,6 +73,9 @@ boolean debugRenderingEnabled_ = false;
 
             }
         });
+
+        createCheckpointSensor(4.5f, 1.5f, new Vector2(1,0));
+        createCheckpointSensor(11.5f,1.5f, new Vector2(0,1));
     }
 
     public void setVelocityIterations(int iterations) {
@@ -129,11 +103,11 @@ boolean debugRenderingEnabled_ = false;
         }
     }
 
-    public void createDynamicBody(float x, float y) {
+    public void createCheckpointSensor(float x, float y, Vector2 heading) {
         // First we create a body definition
         BodyDef bodyDef = new BodyDef();
         // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.type = BodyDef.BodyType.StaticBody;
         // Set our body's starting position in the world
         bodyDef.position.set(x, y);
 
@@ -142,17 +116,16 @@ boolean debugRenderingEnabled_ = false;
 
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.5f);
+        circle.setRadius(0.25f);
 
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+        fixtureDef.isSensor = true;
 
         // Create our fixture and attach it to the body
-        body.createFixture(fixtureDef);
+        Fixture fix = body.createFixture(fixtureDef);
+        fix.setUserData(heading);
 
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.

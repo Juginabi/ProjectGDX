@@ -90,7 +90,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, false);
+        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, true);
         world = new GameWorld(physicsWorld_);
 
         // Lets create camera
@@ -214,7 +214,7 @@ public class TowerDefence extends ApplicationAdapter {
             batch.setProjectionMatrix(cam.combined);
             if (time - timeSinceJesseSpawn > 1000) {
                 Gdx.app.log(TAG, "Spawn");
-                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 4);
+                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 8);
                 timeSinceJesseSpawn = time;
             }
             // Fill map with cannon towers.

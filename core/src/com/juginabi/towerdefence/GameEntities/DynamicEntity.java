@@ -75,28 +75,43 @@ public class DynamicEntity extends Sprite {
         }
         body.setLinearDamping(0.2f);
         body.setUserData(this);
+        body.setLinearDamping(1.3f);
 
         this.setBounds(position.x, position.y, 1, 1);
         this.setOriginCenter();
     }
 
     public void Update(float tickMilliseconds) {
-        Gdx.app.log("Nazi", "Location: " + getX() + ", " + getY());
         stateTime += tickMilliseconds;
         if (heading.y != 0) {
             if (heading.y < 0) {
-                currentFrame = walkAnimations[0].getKeyFrame(stateTime, true);
+                if (velocity == 0)
+                    currentFrame = idleFrames[0];
+                else
+                    currentFrame = walkAnimations[0].getKeyFrame(stateTime, true);
             } else if (heading.y > 0) {
-                currentFrame = walkAnimations[1].getKeyFrame(stateTime, true);
+                if (velocity == 0)
+                    currentFrame = idleFrames[1];
+                else
+                    currentFrame = walkAnimations[1].getKeyFrame(stateTime, true);
             }
         }  else if (heading.x != 0) {
             if (heading.x < 0) {
-                currentFrame = walkAnimations[2].getKeyFrame(stateTime, true);
+                if (velocity == 0)
+                    currentFrame = idleFrames[2];
+                else
+                    currentFrame = walkAnimations[2].getKeyFrame(stateTime, true);
             }
             else if (heading.x > 0) {
-                currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
+                if (velocity == 0)
+                    currentFrame = idleFrames[3];
+                else
+                    currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
             }
         }
+        body.applyForce(heading, body.getWorldCenter(), true);
+        setX(body.getPosition().x - 0.5f);
+        setY(body.getPosition().y - 0.25f);
     }
 
     public void Draw(Batch batch) {
