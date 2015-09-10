@@ -210,11 +210,8 @@ public class TowerDefence extends ApplicationAdapter {
                 worldInitialized = true;
             }
 
-            Batch batch = renderer.getBatch();
-            batch.setProjectionMatrix(cam.combined);
             if (time - timeSinceJesseSpawn > 1000) {
-                Gdx.app.log(TAG, "Spawn");
-                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 8);
+                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 9);
                 timeSinceJesseSpawn = time;
             }
             // Fill map with cannon towers.
@@ -224,17 +221,6 @@ public class TowerDefence extends ApplicationAdapter {
 
             // Update the world state
             world.UpdateWorld(deltaTime);
-
-            Array<Body> bodies = new Array<Body>();
-            physicsWorld_.world_.getBodies(bodies);
-            /*for (Body b : bodies) {
-                DynamicEntity entity = (DynamicEntity) b.getUserData();
-                if (entity != null) {
-                    b.applyForce(entity.getHeading().limit(0.5f), b.getWorldCenter(), true);
-                    entity.setPosition(b.getPosition().x - entity.getWidth() / 2, b.getPosition().y - entity.getHeight() / 2);
-                    entity.setRotation(MathUtils.radiansToDegrees * b.getAngle());
-                }
-            }*/
             // Begin batch and start drawing entities and towers to the map
             batch.begin();
             // Draw the world state using tiledMap Batch
@@ -246,16 +232,18 @@ public class TowerDefence extends ApplicationAdapter {
             // Render rest of the tilemap layers
             renderer.render(topLayers);
             physicsWorld_.doPhysicsStep(deltaTime);
-            /*if (physicsWorld_.world_.getContactCount() > 0) {
-                Array<Contact> list = physicsWorld_.world_.getContactList();
-                for (Contact c : list) {
-                    DynamicEntity entity = (DynamicEntity)c.getFixtureA().getBody().getUserData();
-                    if (entity != null)
-                    {
 
-                    }
+            // Remove dead bodies from world
+            Array<Body> bodies = new Array<Body>();
+            physicsWorld_.world_.getBodies(bodies);
+            for (Body b : bodies) {
+                DynamicEntity entity = (DynamicEntity) b.getUserData();
+                if (entity != null && !entity.isAlive) {
+                    physicsWorld_.world_.destroyBody(entity.body);
+                    entity.body.setUserData(null);
+                    entity.body = null;
                 }
-            }*/
+            }
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);

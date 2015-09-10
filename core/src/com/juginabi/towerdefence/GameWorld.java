@@ -169,23 +169,9 @@ public class GameWorld {
         Stack<DynamicEntity> deadStack = new Stack<DynamicEntity>();
         tileWorld.Update(tickMilliseconds, deadStack);
         DynamicEntity deadEntity = null;
-        /*while (!deadStack.isEmpty()) {
-            deadEntity = deadStack.pop();
-            switch (deadEntity.getType()) {
-                case TowerCannon:
-                    CannonTowers.push(deadEntity);
-                    break;
-                case TowerLaser:
-                    LaserTowers.push(deadEntity);
-                    break;
-                case EnemyGeek:
-                    EnemyGeeks.push(deadEntity);
-                    break;
-                case EnemyJesse:
-                    EnemyJesses.push(deadEntity);
-                    break;
-            }
-        }*/
+        while (!deadStack.isEmpty()) {
+            Enemies.push(deadStack.pop());
+        }
         /*Iterator it = activeList.iterator();
         while (it.hasNext()) {
             DynamicEntity entity = (DynamicEntity) it.next();

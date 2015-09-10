@@ -28,9 +28,10 @@ public class DynamicEntity extends Sprite {
     public float hitpoints;
     public int type;
     public boolean isAlive;
-    private float deathAnimationTime = 1f;
-    public float timeOfDeath = 0;
+    private long deathAnimationTime = 1000;
+    public long timeOfDeath = 0;
     public Body body;
+    public boolean removeThisEntity = false;
 
     // Animations; down, up, left, right
     Animation[] walkAnimations = new Animation[4];
@@ -53,11 +54,12 @@ public class DynamicEntity extends Sprite {
         this.hitpoints = initData.hitpoints;
         this.velocity = initData.velocity;
         this.stateTime = 0f;
-        this.isAlive = true;
         this.currentFrame = idleFrames[0];
     }
 
     public void initialize(Vector2 position) {
+        this.isAlive = true;
+        this.removeThisEntity = false;
         if (body == null) {
             // First we create a body definition
             BodyDef bodyDef = new BodyDef();
@@ -116,10 +118,12 @@ public class DynamicEntity extends Sprite {
                         currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
                 }
             }
-            body.applyForce(heading, body.getWorldCenter(), true);
-            setX(body.getPosition().x - 0.5f);
-            setY(body.getPosition().y - 0.25f);
-        } else {
+            if (body != null) {
+                body.applyForce(heading, body.getWorldCenter(), true);
+                setX(body.getPosition().x - 0.5f);
+                setY(body.getPosition().y - 0.25f);
+            }
+        } else if (!isAlive && TimeUtils.millis() - timeOfDeath < deathAnimationTime) {
             if (heading.y != 0) {
                 if (heading.y < 0) {
                         currentFrame = deathAnimations[0].getKeyFrame(stateTime, true);
@@ -133,16 +137,14 @@ public class DynamicEntity extends Sprite {
                         currentFrame = deathAnimations[3].getKeyFrame(stateTime, true);
                 }
             }
-            if (TimeUtils.millis() - timeOfDeath > deathAnimationTime) {
-                setX(0);
-                setY(0);
-            }
+        } else {
+            removeThisEntity = true;
+            setX(-1f);
+            setY(-1f);
         }
     }
 
     public void Draw(Batch batch) {
-        if (currentFrame == null)
-            currentFrame = idleFrames[0];
         this.setRegion(currentFrame);
         super.draw(batch);
     }

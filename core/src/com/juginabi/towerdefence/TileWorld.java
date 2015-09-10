@@ -61,7 +61,7 @@ public class TileWorld {
             }
             else {
                 // Entity is out of the map for some reason
-                entity.isAlive = false;
+                entity.removeThisEntity = true;
                 deadStack.push(entity);
             }
         }

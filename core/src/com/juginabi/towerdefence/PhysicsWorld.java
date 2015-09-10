@@ -93,8 +93,8 @@ boolean debugRenderingEnabled_ = false;
 
         createCheckpointSensor(4.5f, 1.5f, new Vector2(1,0));
         createCheckpointSensor(11.5f,1.5f, new Vector2(0,1));
-        createCheckpointSensor(4.5f,8.5f, new Vector2(0,-1));
-        createFinishlineSensor(11.5f,8.5f);
+        createCheckpointSensor(4.5f,9.5f, new Vector2(0,-1));
+        createFinishlineSensor(11.5f,9.5f);
     }
 
     public void setVelocityIterations(int iterations) {
