@@ -90,7 +90,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, true);
+        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, false);
         world = new GameWorld(physicsWorld_);
 
         // Lets create camera
@@ -222,6 +222,7 @@ public class TowerDefence extends ApplicationAdapter {
             // Update the world state
             world.UpdateWorld(deltaTime);
             // Begin batch and start drawing entities and towers to the map
+            Batch batch = renderer.getBatch();
             batch.begin();
             // Draw the world state using tiledMap Batch
             world.DrawWorld(batch);
