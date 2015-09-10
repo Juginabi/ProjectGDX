@@ -12,8 +12,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.TowerDefence;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jukka on 3.3.2015.
@@ -25,6 +28,8 @@ public class DynamicEntity extends Sprite {
     public float hitpoints;
     public int type;
     public boolean isAlive;
+    private float deathAnimationTime = 1f;
+    public float timeOfDeath = 0;
     public Body body;
 
     // Animations; down, up, left, right
@@ -44,10 +49,12 @@ public class DynamicEntity extends Sprite {
         this.walkAnimations = initData.walkAnimations;
         this.deathAnimations = initData.deathAnimations;
         this.idleFrames = initData.idleFrames;
-        this.heading = new Vector2(0, -1);
+        this.heading = new Vector2(0, 0);
         this.hitpoints = initData.hitpoints;
         this.velocity = initData.velocity;
         this.stateTime = 0f;
+        this.isAlive = true;
+        this.currentFrame = idleFrames[0];
     }
 
     public void initialize(Vector2 position) {
@@ -69,8 +76,8 @@ public class DynamicEntity extends Sprite {
             fixture.density = 0.5f;
             fixture.friction = 0.4f;
             fixture.restitution = 0.6f; // Make it bounce a little bit
-            fixture.filter.categoryBits = 0x02;
-            fixture.filter.maskBits = 0x01;
+            fixture.filter.categoryBits = 0x10;
+            fixture.filter.maskBits = 0x0A | 0x0B;
             body.createFixture(fixture);
         }
         body.setLinearDamping(0.2f);
@@ -83,38 +90,59 @@ public class DynamicEntity extends Sprite {
 
     public void Update(float tickMilliseconds) {
         stateTime += tickMilliseconds;
-        if (heading.y != 0) {
-            if (heading.y < 0) {
-                if (velocity == 0)
-                    currentFrame = idleFrames[0];
-                else
-                    currentFrame = walkAnimations[0].getKeyFrame(stateTime, true);
-            } else if (heading.y > 0) {
-                if (velocity == 0)
-                    currentFrame = idleFrames[1];
-                else
-                    currentFrame = walkAnimations[1].getKeyFrame(stateTime, true);
+        if (isAlive) {
+            if (heading.y != 0) {
+                if (heading.y < 0) {
+                    if (velocity == 0)
+                        currentFrame = idleFrames[0];
+                    else
+                        currentFrame = walkAnimations[0].getKeyFrame(stateTime, true);
+                } else if (heading.y > 0) {
+                    if (velocity == 0)
+                        currentFrame = idleFrames[1];
+                    else
+                        currentFrame = walkAnimations[1].getKeyFrame(stateTime, true);
+                }
+            } else if (heading.x != 0) {
+                if (heading.x < 0) {
+                    if (velocity == 0)
+                        currentFrame = idleFrames[2];
+                    else
+                        currentFrame = walkAnimations[2].getKeyFrame(stateTime, true);
+                } else if (heading.x > 0) {
+                    if (velocity == 0)
+                        currentFrame = idleFrames[3];
+                    else
+                        currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
+                }
             }
-        }  else if (heading.x != 0) {
-            if (heading.x < 0) {
-                if (velocity == 0)
-                    currentFrame = idleFrames[2];
-                else
-                    currentFrame = walkAnimations[2].getKeyFrame(stateTime, true);
+            body.applyForce(heading, body.getWorldCenter(), true);
+            setX(body.getPosition().x - 0.5f);
+            setY(body.getPosition().y - 0.25f);
+        } else {
+            if (heading.y != 0) {
+                if (heading.y < 0) {
+                        currentFrame = deathAnimations[0].getKeyFrame(stateTime, true);
+                } else if (heading.y > 0) {
+                        currentFrame = deathAnimations[1].getKeyFrame(stateTime, true);
+                }
+            } else if (heading.x != 0) {
+                if (heading.x < 0) {
+                        currentFrame = deathAnimations[2].getKeyFrame(stateTime, true);
+                } else if (heading.x > 0) {
+                        currentFrame = deathAnimations[3].getKeyFrame(stateTime, true);
+                }
             }
-            else if (heading.x > 0) {
-                if (velocity == 0)
-                    currentFrame = idleFrames[3];
-                else
-                    currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
+            if (TimeUtils.millis() - timeOfDeath > deathAnimationTime) {
+                setX(0);
+                setY(0);
             }
         }
-        body.applyForce(heading, body.getWorldCenter(), true);
-        setX(body.getPosition().x - 0.5f);
-        setY(body.getPosition().y - 0.25f);
     }
 
     public void Draw(Batch batch) {
+        if (currentFrame == null)
+            currentFrame = idleFrames[0];
         this.setRegion(currentFrame);
         super.draw(batch);
     }

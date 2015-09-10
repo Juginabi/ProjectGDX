@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 
 /**
@@ -50,10 +51,26 @@ boolean debugRenderingEnabled_ = false;
             public void beginContact(Contact contact) {
                 DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
                 if (e != null) {
-                    e.heading = (Vector2)contact.getFixtureB().getUserData();
+                    if (contact.getFixtureB().getFilterData().categoryBits == 0x0A) {
+                        // This is heading sensor
+                        e.heading = (Vector2)contact.getFixtureB().getUserData();
+                    } else if (contact.getFixtureB().getFilterData().categoryBits == 0x0B) {
+                        // This is finishline sensor
+                        e.timeOfDeath = TimeUtils.millis();
+                        e.isAlive = false;
+                    }
+
                 } else {
-                    DynamicEntity ent = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
-                    ent.heading = (Vector2)contact.getFixtureA().getUserData();
+                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
+                    if (contact.getFixtureA().getFilterData().categoryBits == 0x0A) {
+                        // This is heading sensor
+                        e.heading = (Vector2)contact.getFixtureA().getUserData();
+                    } else if (contact.getFixtureA().getFilterData().categoryBits == 0x0B) {
+                        // This is finishline sensor
+                        e.isAlive = false;
+                        e.timeOfDeath = TimeUtils.millis();
+                    }
+
                 }
             }
 
@@ -76,6 +93,8 @@ boolean debugRenderingEnabled_ = false;
 
         createCheckpointSensor(4.5f, 1.5f, new Vector2(1,0));
         createCheckpointSensor(11.5f,1.5f, new Vector2(0,1));
+        createCheckpointSensor(4.5f,8.5f, new Vector2(0,-1));
+        createFinishlineSensor(11.5f,8.5f);
     }
 
     public void setVelocityIterations(int iterations) {
@@ -122,10 +141,40 @@ boolean debugRenderingEnabled_ = false;
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = 0x0A;
 
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);
         fix.setUserData(heading);
+
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        circle.dispose();
+    }
+
+    public void createFinishlineSensor(float x, float y) {
+        // First we create a body definition
+        BodyDef bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        // Set our body's starting position in the world
+        bodyDef.position.set(x, y);
+
+        // Create our body in the world using our body definition
+        Body body = world_.createBody(bodyDef);
+
+        // Create a circle shape and set its radius to 6
+        CircleShape circle = new CircleShape();
+        circle.setRadius(0.25f);
+
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = 0x0B;
+
+        // Create our fixture and attach it to the body
+        Fixture fix = body.createFixture(fixtureDef);
 
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.

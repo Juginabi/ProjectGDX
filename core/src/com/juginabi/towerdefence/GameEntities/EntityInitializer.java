@@ -131,6 +131,10 @@ public class EntityInitializer {
         deathAnimations[1] = new Animation(0.1f, deathUpFrames);
         deathAnimations[2] = new Animation(0.1f, deathLeftFrames);
         deathAnimations[3] = new Animation(0.1f, deathRightFrames);
+        idleFrames[0] = downIdleFrame;
+        idleFrames[1] = upIdleFrame;
+        idleFrames[2] = leftIdleFrame;
+        idleFrames[3] = rightIdleFrame;
         return true;
     }
 
