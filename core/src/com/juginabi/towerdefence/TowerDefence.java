@@ -61,28 +61,18 @@ public class TowerDefence extends ApplicationAdapter {
     private final int MAP_WIDTH = 16;
     private final int MAP_HEIGHT = 9;
 
-    private long timeSinceSpawn;
-    private long spawnInterval;
-    private long jesseSpawnInterval;
-    private long timeSinceJesseSpawn;
-    private long timeSinceMonstersStarted;
-    private boolean spawnMore = true;
+    private long monsterSpawnTime;
 
     // Handles all input events
-    private EventHandler event = null;
+    private EventHandler event;
     public static AssetManager manager;
-    private GameWorld world;
-    public static PhysicsWorld physicsWorld_;
+    private GameWorld gameWorld;
+    private PhysicsWorld physicsWorld;
 
     private boolean worldInitialized = false;
 
-    public interface traceInterface {
-        public void startTrace(String name);
-    }
-
 	@Override
 	public void create () {
-        Gdx.app.log(TAG, "Create!");
         // Event handler init
         event = new EventHandler();
         // Asset handling init
@@ -90,14 +80,11 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld_ = new PhysicsWorld(new Vector2(0, 0), true, false);
-        world = new GameWorld(physicsWorld_);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
+        gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
         cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
-        // Viewport for the camera
-        // Set camera position to middle of viewport dimensions
-        //cam.position.set(MAP_WIDTH*TILE_WIDTH/2.f-TILE_WIDTH/2.f, MAP_HEIGHT*TILE_HEIGHT/2.f, 15);
 
         // Load our level1 TD map
         map = new TmxMapLoader().load("Graphics/Maps/Level1.tmx");
@@ -110,12 +97,7 @@ public class TowerDefence extends ApplicationAdapter {
         TOP_LAYER = (TiledMapTileLayer) map.getLayers().get("TOP_LAYER");
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
-        timeSinceSpawn = TimeUtils.millis();
-        timeSinceJesseSpawn = TimeUtils.millis();
-        timeSinceMonstersStarted = TimeUtils.millis();
-
-        spawnInterval = 200;
-        jesseSpawnInterval = 500;
+        monsterSpawnTime = TimeUtils.millis();
 
         font = new BitmapFont();
         font.setColor(Color.RED);
@@ -132,33 +114,6 @@ public class TowerDefence extends ApplicationAdapter {
         manager.load("Graphics/topdown-nazi.png", Texture.class);
         manager.load("Graphics/topdown1.png", Texture.class);
         //manager.load("Audio/defaultlaser.ogg", Sound.class);
-    }
-
-    public void moveCamera () {
-        EventHandler.CursorStatus status = event.getCursorStatus().get(0);
-        if (status.getMouseLeft()) {
-            float x = status.getPosition().x;
-            float y = status.getPosition().y;
-            Ray pickRay = cam.getPickRay(x, y);
-            Intersector.intersectRayPlane(pickRay, intersectPlane, curr);
-
-            if(!(last.x == -1 && last.y == -1 && last.z == -1)) {
-                pickRay = cam.getPickRay(last.x, last.y);
-                Intersector.intersectRayPlane(pickRay, intersectPlane, delta);
-                delta.sub(curr);
-                cam.position.add(delta.x, delta.y, delta.z);
-                int totalWidth = MAP_WIDTH*TILE_WIDTH;
-                int totalHEIGHT = MAP_HEIGHT*TILE_WIDTH;
-                float viewPortWidth = cam.viewportWidth;
-                float viewPortHeight = cam.viewportHeight;
-                cam.position.x = MathUtils.clamp(cam.position.x,viewPortWidth/2f, totalWidth-viewPortWidth/2f);
-                cam.position.y = MathUtils.clamp(cam.position.y,viewPortHeight/2f, totalHEIGHT/2f +(totalHEIGHT/2f - viewPortHeight/2f));
-
-            }
-            last.set(x, y, 0);
-        }
-
-
     }
 
     private void checkTileTouched() {
@@ -194,7 +149,7 @@ public class TowerDefence extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-        Gdx.gl.glClearColor(0/255f,0/255f,0/255f,1);
+        Gdx.gl.glClearColor(190 / 255f, 255 / 255f, 255 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float deltaTime = Gdx.graphics.getRawDeltaTime();
@@ -206,13 +161,13 @@ public class TowerDefence extends ApplicationAdapter {
             long time = TimeUtils.millis();
 
             if (!worldInitialized) {
-                world.InitializeWorld();
+                gameWorld.InitializeWorld();
                 worldInitialized = true;
             }
 
-            if (time - timeSinceJesseSpawn > 1000) {
+            if (time - monsterSpawnTime > 1000) {
                 SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 9);
-                timeSinceJesseSpawn = time;
+                monsterSpawnTime = time;
             }
             // Fill map with cannon towers.
             //FillMapWithCannonTowers(time);
@@ -220,27 +175,27 @@ public class TowerDefence extends ApplicationAdapter {
             renderer.render(groundLayers);
 
             // Update the world state
-            world.UpdateWorld(deltaTime);
+            gameWorld.UpdateWorld(deltaTime);
             // Begin batch and start drawing entities and towers to the map
             Batch batch = renderer.getBatch();
             batch.begin();
             // Draw the world state using tiledMap Batch
-            world.DrawWorld(batch);
+            gameWorld.DrawWorld(batch);
             // End batch
             batch.end();
 
-            physicsWorld_.render(cam);
+            physicsWorld.render(cam);
             // Render rest of the tilemap layers
             renderer.render(topLayers);
-            physicsWorld_.doPhysicsStep(deltaTime);
+            physicsWorld.doPhysicsStep(deltaTime);
 
             // Remove dead bodies from world
             Array<Body> bodies = new Array<Body>();
-            physicsWorld_.world_.getBodies(bodies);
+            physicsWorld.world_.getBodies(bodies);
             for (Body b : bodies) {
                 DynamicEntity entity = (DynamicEntity) b.getUserData();
                 if (entity != null && !entity.isAlive) {
-                    physicsWorld_.world_.destroyBody(entity.body);
+                    physicsWorld.world_.destroyBody(entity.body);
                     entity.body.setUserData(null);
                     entity.body = null;
                 }
@@ -262,35 +217,30 @@ public class TowerDefence extends ApplicationAdapter {
 	}
 
     private void SpawnEntity(int type, int x, int y) {
-        DynamicEntity entity = world.SpawnEntity(type, x, y);
+        DynamicEntity entity = gameWorld.SpawnEntity(type, x, y);
     }
-
-    /*private void FillMapWithCannonTowers(long time) {
-        if ((time - timeSinceMonstersStarted) > 1000 && spawnMore){
-            for (int x = 0; x < MAP_WIDTH; ++x )
-                for (int y = 0; y < MAP_HEIGHT; ++y) {
-                    TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
-                    if (cell == null) {
-                        DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
-                        if (cannon != null) {
-                            // Entity succesfully created
-                            cannon.initialize(x, y);
-                            //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
-                            //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
-                        }
-                    }
-                }
-            spawnMore = false;
-        }
-    }*/
 
     @Override
     public void resize(int width, int height) {
         // Dispose all the assets here and recreate
-        Gdx.app.log(TAG, "resize event!");
-        float aspectRatio = width / (float) height;
-        cam = new OrthographicCamera(MAP_WIDTH,MAP_HEIGHT);
-        cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2, 0);
+        float screenAR = width / (float) height;
+        float mapAR = MAP_WIDTH / (float)MAP_HEIGHT;
+        // Set camera always so it shows map centered vertically and horizontally filling the screen on shortest side
+        if (mapAR > screenAR) {
+            cam = new OrthographicCamera(MAP_WIDTH, MAP_WIDTH / screenAR);
+            float mapHeight = ((width*MAP_HEIGHT)/MAP_WIDTH);
+            float emptySpace = height - mapHeight;
+            float tileHeight = mapHeight / MAP_HEIGHT;
+            float tmp = emptySpace / tileHeight;
+            cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2 - tmp/2, 0);
+        } else {
+            cam = new OrthographicCamera(MAP_HEIGHT*screenAR, MAP_HEIGHT);
+            float mapWidth = ((height*MAP_WIDTH)/MAP_HEIGHT);
+            float emptySpace = width - mapWidth;
+            float tileHeight = mapWidth / MAP_WIDTH;
+            float tmp = emptySpace / tileHeight;
+            cam.position.set(cam.viewportWidth / 2 - tmp/2, cam.viewportHeight / 2, 0);
+        }
         cam.update();
     }
 
@@ -312,4 +262,48 @@ public class TowerDefence extends ApplicationAdapter {
     public static AssetManager getAssetManager() {
         return manager;
     }
+
+    /*public void moveCamera () {
+        EventHandler.CursorStatus status = event.getCursorStatus().get(0);
+        if (status.getMouseLeft()) {
+            float x = status.getPosition().x;
+            float y = status.getPosition().y;
+            Ray pickRay = cam.getPickRay(x, y);
+            Intersector.intersectRayPlane(pickRay, intersectPlane, curr);
+
+            if(!(last.x == -1 && last.y == -1 && last.z == -1)) {
+                pickRay = cam.getPickRay(last.x, last.y);
+                Intersector.intersectRayPlane(pickRay, intersectPlane, delta);
+                delta.sub(curr);
+                cam.position.add(delta.x, delta.y, delta.z);
+                int totalWidth = MAP_WIDTH*TILE_WIDTH;
+                int totalHEIGHT = MAP_HEIGHT*TILE_WIDTH;
+                float viewPortWidth = cam.viewportWidth;
+                float viewPortHeight = cam.viewportHeight;
+                cam.position.x = MathUtils.clamp(cam.position.x,viewPortWidth/2f, totalWidth-viewPortWidth/2f);
+                cam.position.y = MathUtils.clamp(cam.position.y,viewPortHeight/2f, totalHEIGHT/2f +(totalHEIGHT/2f - viewPortHeight/2f));
+
+            }
+            last.set(x, y, 0);
+        }
+    }
+
+    private void FillMapWithCannonTowers(long time) {
+        if ((time - timeSinceMonstersStarted) > 1000 && spawnMore){
+            for (int x = 0; x < MAP_WIDTH; ++x )
+                for (int y = 0; y < MAP_HEIGHT; ++y) {
+                    TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
+                    if (cell == null) {
+                        DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
+                        if (cannon != null) {
+                            // Entity succesfully created
+                            cannon.initialize(x, y);
+                            //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
+                            //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
+                        }
+                    }
+                }
+            spawnMore = false;
+        }
+    }*/
 }

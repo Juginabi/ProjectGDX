@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
+import com.juginabi.towerdefence.PhysicsWorld;
 import com.juginabi.towerdefence.TowerDefence;
 
 import java.util.concurrent.TimeUnit;
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Created by Jukka on 3.3.2015.
  */
 public class DynamicEntity extends Sprite {
-    public final GameWorld parent;
+    public final GameWorld gameWorld;
+    public final PhysicsWorld physicsWorld;
     public Vector2 heading;
     public float velocity;
     public float hitpoints;
@@ -45,8 +47,9 @@ public class DynamicEntity extends Sprite {
     // Animation state time which is used to pick correct key frame from animation
     private float stateTime = 0;
 
-    public DynamicEntity(GameWorld parent, EntityInitializer initData) {
-        this.parent = parent;
+    public DynamicEntity(GameWorld gameWorld, PhysicsWorld physicsWorld, EntityInitializer initData) {
+        this.gameWorld = gameWorld;
+        this.physicsWorld = physicsWorld;
         this.walkAnimations = initData.walkAnimations;
         this.deathAnimations = initData.deathAnimations;
         this.idleFrames = initData.idleFrames;
@@ -69,7 +72,7 @@ public class DynamicEntity extends Sprite {
             bodyDef.position.set(position.x+0.5f, position.y+0.5f);
 
             // Create our body in the world using our body definition
-            body = TowerDefence.physicsWorld_.world_.createBody(bodyDef);
+            body = physicsWorld.world_.createBody(bodyDef);
 
             CircleShape circle = new CircleShape();
             circle.setRadius(0.5f);

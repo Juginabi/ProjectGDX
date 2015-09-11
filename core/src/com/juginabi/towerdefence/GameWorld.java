@@ -137,7 +137,7 @@ public class GameWorld {
         DynamicEntity entity = null;
         switch (type) {
             case DynamicEntity.ID_ENEMY_NAZI:
-                entity = new DynamicEntity(this, initializer);
+                entity = new DynamicEntity(this, physicsWorld, initializer);
                 //entity = new NaziSoldier(this, entityAtlas.findRegion("smiley"));
                 break;
             /*case EnemyJesse:
