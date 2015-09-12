@@ -24,6 +24,12 @@ import com.juginabi.towerdefence.GameEntities.DynamicEntity;
  */
 public class PhysicsWorld {
     public static final String TAG = "PhysicsWorld";
+
+    public static short
+                        SENSOR_NAVIGATION = 0x0001,
+                        SENSOR_GOAL = 0x0002,
+                        ENTITY_ENEMY = 0x0004,
+                        ENTITY_DEFENDER = 0x0008;
     // PhysicsWorld
     public World world_;
 
@@ -51,10 +57,10 @@ boolean debugRenderingEnabled_ = false;
             public void beginContact(Contact contact) {
                 DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
                 if (e != null) {
-                    if (contact.getFixtureB().getFilterData().categoryBits == 0x0A) {
+                    if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
-                        e.heading = (Vector2)contact.getFixtureB().getUserData();
-                    } else if (contact.getFixtureB().getFilterData().categoryBits == 0x0B) {
+                        e.target = (Vector2)contact.getFixtureB().getUserData();
+                    } else if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_GOAL) {
                         // This is finishline sensor
                         e.timeOfDeath = TimeUtils.millis();
                         e.isAlive = false;
@@ -62,10 +68,10 @@ boolean debugRenderingEnabled_ = false;
 
                 } else {
                     e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
-                    if (contact.getFixtureA().getFilterData().categoryBits == 0x0A) {
+                    if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
-                        e.heading = (Vector2)contact.getFixtureA().getUserData();
-                    } else if (contact.getFixtureA().getFilterData().categoryBits == 0x0B) {
+                        e.target = (Vector2)contact.getFixtureA().getUserData();
+                    } else if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_GOAL) {
                         // This is finishline sensor
                         e.isAlive = false;
                         e.timeOfDeath = TimeUtils.millis();
@@ -91,9 +97,9 @@ boolean debugRenderingEnabled_ = false;
             }
         });
 
-        createCheckpointSensor(4.5f, 1.5f, new Vector2(1,0));
-        createCheckpointSensor(11.5f,1.5f, new Vector2(0,1));
-        createCheckpointSensor(4.5f,9.5f, new Vector2(0,-1));
+        createCheckpointSensor(4.5f, 9.5f, new Vector2(4.5f, 1.5f));
+        createCheckpointSensor(4.5f, 1.5f, new Vector2(11.5f, 1.5f));
+        createCheckpointSensor(11.5f,1.5f, new Vector2(11.5f,9.5f));
         createFinishlineSensor(11.5f,9.5f);
     }
 
@@ -141,7 +147,7 @@ boolean debugRenderingEnabled_ = false;
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
-        fixtureDef.filter.categoryBits = 0x0A;
+        fixtureDef.filter.categoryBits = SENSOR_NAVIGATION;
 
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);
@@ -171,7 +177,7 @@ boolean debugRenderingEnabled_ = false;
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
-        fixtureDef.filter.categoryBits = 0x0B;
+        fixtureDef.filter.categoryBits = SENSOR_GOAL;
 
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);

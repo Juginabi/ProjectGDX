@@ -80,7 +80,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, true);
         gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
@@ -201,6 +201,7 @@ public class TowerDefence extends ApplicationAdapter {
                 }
             }
 
+
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);
             if (!status.getMouseLeft())
@@ -216,7 +217,7 @@ public class TowerDefence extends ApplicationAdapter {
         }
 	}
 
-    private void SpawnEntity(int type, int x, int y) {
+    private void SpawnEntity(int type, float x, float y) {
         DynamicEntity entity = gameWorld.SpawnEntity(type, x, y);
     }
 

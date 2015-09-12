@@ -88,14 +88,14 @@ public class TileWorld {
     }
 
     @Deprecated
-    public void InsertEntity(int x, int y, DynamicEntity entity) {
+    public void InsertEntity(float x, float y, DynamicEntity entity) {
         Tile tile = GetTile(x, y);
         tile.InsertEntity(entity);
     }
 
     @Deprecated
-    public Tile GetTile(int x, int y) {
-        return tileMap.get(x).get(y);
+    public Tile GetTile(float x, float y) {
+        return tileMap.get((int)x).get((int)y);
     }
 
     @Deprecated
