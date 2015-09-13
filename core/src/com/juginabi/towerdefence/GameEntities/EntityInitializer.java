@@ -1,20 +1,13 @@
 package com.juginabi.towerdefence.GameEntities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.XmlReader;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by Jukka on 9.9.2015.

@@ -1,6 +1,5 @@
 package com.juginabi.towerdefence.GameEntities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -117,7 +116,7 @@ public class DynamicEntity extends Sprite {
 
     public void Draw(Batch batch) {
         this.setRegion(currentFrame);
-        Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
+        //Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
         super.draw(batch);
     }
 
