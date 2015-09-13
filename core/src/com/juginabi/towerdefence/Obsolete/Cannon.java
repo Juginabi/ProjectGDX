@@ -1,4 +1,4 @@
-package com.juginabi.towerdefence.GameEntities.Towers;
+package com.juginabi.towerdefence.Obsolete;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicEntity;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.GameEntities.Projectiles.Laser;
-import com.juginabi.towerdefence.TileWorld;
 import com.juginabi.towerdefence.TowerDefence;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.juginabi.towerdefence.GameEntities.Monsters;
+package com.juginabi.towerdefence.Obsolete;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
