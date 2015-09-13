@@ -1,25 +1,18 @@
 package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.PhysicsWorld;
-import com.juginabi.towerdefence.TowerDefence;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jukka on 3.3.2015.
@@ -43,9 +36,6 @@ public class DynamicEntity extends Sprite {
     Animation[] walkAnimations = new Animation[4];
     Animation[] deathAnimations = new Animation[4];
     TextureRegion[] idleFrames = new TextureRegion[4];
-    // Sprite sheet contains all animation frames for down, up, left, right
-    // For every row; Frame1: idle, Frame2-7: move, Frame 8-11: death
-    Texture spriteSheet;
     // Current frame of animation to be displayed. Update loop updates this
     TextureRegion currentFrame;
     // Animation state time which is used to pick correct key frame from animation
@@ -114,6 +104,7 @@ public class DynamicEntity extends Sprite {
                 body.applyForce(this.headingImpulse, body.getWorldCenter(), true);
                 setX(body.getPosition().x - 0.5f);
                 setY(body.getPosition().y - 0.25f);
+                //Gdx.app.log(TAG, "My sprite pos: " + getX() + ", " + getY());
             }
         } else if (!isAlive && TimeUtils.millis() - timeOfDeath < deathAnimationTime) {
             currentFrame = deathAnimations[0].getKeyFrame(stateTime, true);
@@ -126,6 +117,7 @@ public class DynamicEntity extends Sprite {
 
     public void Draw(Batch batch) {
         this.setRegion(currentFrame);
+        Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
         super.draw(batch);
     }
 
