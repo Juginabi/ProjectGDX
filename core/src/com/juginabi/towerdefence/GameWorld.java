@@ -34,7 +34,7 @@ public class GameWorld {
     public void InitializeWorld() {
         entityAtlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
         int i = 0;
-        while (i != 1) {
+        while (i != 20) {
             EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
             //CreateEntity(TowerCannon);
             CreateEntity(DynamicEntity.ID_ENEMY_NAZI, initializer);
@@ -92,7 +92,9 @@ public class GameWorld {
         }
         DynamicEntity deadEntity = null;
         while (!deadStack.isEmpty()) {
-            enemies.push(deadStack.pop());
+            deadEntity = deadStack.pop();
+            enemies.push(deadEntity);
+            activeList.remove(deadEntity);
         }
     }
 

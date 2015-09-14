@@ -20,7 +20,7 @@ public class DynamicEntity extends Sprite {
     private static final String TAG = "DynamicEntity";
     private final GameWorld gameWorld;
     private final PhysicsWorld physicsWorld;
-    public Vector2 target;
+    private Vector2 target;
     public float velocity;
     public float hitpoints;
     public int type;
@@ -49,7 +49,6 @@ public class DynamicEntity extends Sprite {
         this.target = new Vector2(0, 0);
         this.hitpoints = initData.hitpoints;
         this.velocity = initData.velocity;
-        this.stateTime = 0f;
         this.currentFrame = idleFrames[0];
     }
 
@@ -57,6 +56,8 @@ public class DynamicEntity extends Sprite {
         this.isAlive = true;
         this.removeThisEntity = false;
         this.headingImpulse = new Vector2(0,0);
+        this.stateTime = 0f;
+        this.target = new Vector2();
         if (body == null) {
             // First we create a body definition
             BodyDef bodyDef = new BodyDef();
@@ -76,6 +77,7 @@ public class DynamicEntity extends Sprite {
             fixture.filter.categoryBits = PhysicsWorld.ENTITY_ENEMY;
             fixture.filter.maskBits = (short) (PhysicsWorld.SENSOR_NAVIGATION | PhysicsWorld.SENSOR_GOAL);
             body.createFixture(fixture);
+            shape.dispose();
         }
         body.setUserData(this);
         body.setLinearDamping(1.3f);
@@ -99,8 +101,7 @@ public class DynamicEntity extends Sprite {
             }
             if (body != null) {
                 this.headingImpulse = new Vector2(target.x - body.getPosition().x, target.y - body.getPosition().y);
-                this.headingImpulse.nor();
-                body.applyForce(this.headingImpulse, body.getWorldCenter(), true);
+                body.applyForce(this.headingImpulse.nor(), body.getWorldCenter(), true);
                 setX(body.getPosition().x - 0.5f);
                 setY(body.getPosition().y - 0.25f);
                 //Gdx.app.log(TAG, "My sprite pos: " + getX() + ", " + getY());
@@ -118,6 +119,10 @@ public class DynamicEntity extends Sprite {
         this.setRegion(currentFrame);
         //Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
         super.draw(batch);
+    }
+
+    public void setTarget(Vector2 vec) {
+        this.target = vec;
     }
 
     public static final int

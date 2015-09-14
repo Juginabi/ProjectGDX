@@ -56,7 +56,7 @@ boolean debugRenderingEnabled_ = false;
                 if (e != null) {
                     if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
-                        e.target = (Vector2)contact.getFixtureB().getUserData();
+                        e.setTarget((Vector2) contact.getFixtureB().getUserData());
                     } else if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_GOAL) {
                         // This is finishline sensor
                         e.timeOfDeath = TimeUtils.millis();
@@ -67,7 +67,7 @@ boolean debugRenderingEnabled_ = false;
                     e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
                     if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
-                        e.target = (Vector2)contact.getFixtureA().getUserData();
+                        e.setTarget((Vector2)contact.getFixtureB().getUserData());
                     } else if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_GOAL) {
                         // This is finishline sensor
                         e.isAlive = false;
