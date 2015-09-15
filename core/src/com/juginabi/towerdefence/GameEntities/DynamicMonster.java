@@ -16,7 +16,7 @@ import com.juginabi.towerdefence.PhysicsWorld;
 /**
  * Created by Jukka on 3.3.2015.
  */
-public class DynamicEntity extends Sprite {
+public class DynamicMonster extends Sprite {
     private static final String TAG = "DynamicEntity";
     private final GameWorld gameWorld;
     private final PhysicsWorld physicsWorld;
@@ -40,7 +40,7 @@ public class DynamicEntity extends Sprite {
     // Animation state time which is used to pick correct key frame from animation
     private float stateTime = 0;
 
-    public DynamicEntity(GameWorld gameWorld, PhysicsWorld physicsWorld, EntityInitializer initData) {
+    public DynamicMonster(GameWorld gameWorld, PhysicsWorld physicsWorld, EntityInitializer initData) {
         this.gameWorld = gameWorld;
         this.physicsWorld = physicsWorld;
         this.walkAnimations = initData.walkAnimations;
@@ -50,21 +50,20 @@ public class DynamicEntity extends Sprite {
         this.hitpoints = initData.hitpoints;
         this.velocity = initData.velocity;
         this.currentFrame = idleFrames[0];
+        this.headingImpulse = new Vector2(0,0);
     }
 
-    public void initialize(Vector2 position) {
+    public void initialize(float posX, float posY) {
         this.isAlive = true;
         this.removeThisEntity = false;
-        this.headingImpulse = new Vector2(0,0);
         this.stateTime = 0f;
-        this.target = new Vector2();
         if (body == null) {
             // First we create a body definition
             BodyDef bodyDef = new BodyDef();
             // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
             bodyDef.type = BodyDef.BodyType.DynamicBody;
             // Set our body's starting position in the world
-            bodyDef.position.set(position.x+0.5f, position.y+0.5f);
+            bodyDef.position.set(posX+0.5f, posY+0.5f);
             // Create our body in the world using our body definition
             body = physicsWorld.world_.createBody(bodyDef);
             PolygonShape shape = new PolygonShape();
@@ -82,7 +81,7 @@ public class DynamicEntity extends Sprite {
         body.setUserData(this);
         body.setLinearDamping(1.3f);
 
-        this.setBounds(position.x, position.y, 1, 1);
+        this.setBounds(posX, posY, 1, 1);
         this.setOriginCenter();
     }
 
@@ -100,7 +99,8 @@ public class DynamicEntity extends Sprite {
                 currentFrame = walkAnimations[3].getKeyFrame(stateTime, true);
             }
             if (body != null) {
-                this.headingImpulse = new Vector2(target.x - body.getPosition().x, target.y - body.getPosition().y);
+                this.headingImpulse.x = target.x - body.getPosition().x;
+                this.headingImpulse.y = target.y - body.getPosition().y;
                 body.applyForce(this.headingImpulse.nor(), body.getWorldCenter(), true);
                 setX(body.getPosition().x - 0.5f);
                 setY(body.getPosition().y - 0.25f);

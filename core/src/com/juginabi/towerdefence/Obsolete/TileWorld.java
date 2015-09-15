@@ -1,10 +1,8 @@
 package com.juginabi.towerdefence.Obsolete;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
+import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,9 +33,9 @@ public class TileWorld {
     }
 
     @Deprecated
-    public void Update(float tickSeconds, Stack<DynamicEntity> deadStack) {
+    public void Update(float tickSeconds, Stack<DynamicMonster> deadStack) {
         int i = 0;
-        Stack<DynamicEntity> transferList = new Stack<DynamicEntity>();
+        Stack<DynamicMonster> transferList = new Stack<DynamicMonster>();
         // This while loop updates the entity positions in map for each tile
         while (i < tileMap.size()) {
             List<Tile> tileColumn = tileMap.get(i);
@@ -53,7 +51,7 @@ public class TileWorld {
         float y;
         // move entities to correct tile area.
         while (!transferList.isEmpty()) {
-            DynamicEntity entity = transferList.pop();
+            DynamicMonster entity = transferList.pop();
             x = entity.getX()/64f;
             y = entity.getY()/64f;
             if (checkMapBounds(x,y)) {
@@ -88,7 +86,7 @@ public class TileWorld {
     }
 
     @Deprecated
-    public void InsertEntity(float x, float y, DynamicEntity entity) {
+    public void InsertEntity(float x, float y, DynamicMonster entity) {
         Tile tile = GetTile(x, y);
         tile.InsertEntity(entity);
     }
@@ -107,8 +105,8 @@ public class TileWorld {
         private int lowerY;
         private int upperX;
         private int upperY;
-        private List<DynamicEntity> entityList;
-        private Stack<DynamicEntity> transferList;
+        private List<DynamicMonster> entityList;
+        private Stack<DynamicMonster> transferList;
         @Deprecated
         public Tile(int x, int y) {
             // I am a tile and this is my neighbourhood!
@@ -118,12 +116,12 @@ public class TileWorld {
             this.lowerY = this.y * 64;
             this.upperX = this.lowerX + 63;
             this.upperY = this.lowerY + 63;
-            entityList = new ArrayList<DynamicEntity>();
-            transferList = new Stack<DynamicEntity>();
+            entityList = new ArrayList<DynamicMonster>();
+            transferList = new Stack<DynamicMonster>();
             TAG = "TILE(" + x + "," + y + ")";
         }
         @Deprecated
-        public void GetEntities(List<DynamicEntity> list) {
+        public void GetEntities(List<DynamicMonster> list) {
             if (!entityList.isEmpty()) {
                 for (int i = 0; i < entityList.size(); ++i)
                     list.add(entityList.get(i));
@@ -134,7 +132,7 @@ public class TileWorld {
             if (entityList.size() > 0) {
                 Iterator it = entityList.iterator();
                 while (it.hasNext()) {
-                    DynamicEntity entity = (DynamicEntity) it.next();
+                    DynamicMonster entity = (DynamicMonster) it.next();
                     entity.Update(tickSeconds);
                     if (!checkBounds(entity.getX(), entity.getY())) {
                         // Entity is out of bounds from this tile.
@@ -145,13 +143,13 @@ public class TileWorld {
             }
         }
         @Deprecated
-        public void InsertEntity(DynamicEntity entity) {
+        public void InsertEntity(DynamicMonster entity) {
             if (!entityList.contains(entity)) {
                 entityList.add(entity);
             }
         }
         @Deprecated
-        public void RemoveEntity(DynamicEntity entity) {
+        public void RemoveEntity(DynamicMonster entity) {
             if (entityList.contains(entity))
                 entityList.remove(entity);
         }
@@ -163,7 +161,7 @@ public class TileWorld {
                 return true;
         }
         @Deprecated
-        public void getTransferList(Stack<DynamicEntity> masterList) {
+        public void getTransferList(Stack<DynamicMonster> masterList) {
             while (!transferList.isEmpty()) masterList.push(transferList.pop());
         }
         @Deprecated
@@ -171,7 +169,7 @@ public class TileWorld {
             if (entityList.size() > 0) {
                 Iterator it = entityList.iterator();
                 while (it.hasNext()) {
-                    DynamicEntity entity = (DynamicEntity) it.next();
+                    DynamicMonster entity = (DynamicMonster) it.next();
                     entity.Draw(batch);
                 }
             }

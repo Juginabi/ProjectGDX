@@ -24,7 +24,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
+import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 
 public class TowerDefence extends ApplicationAdapter {
     private BitmapFont font;
@@ -70,6 +70,8 @@ public class TowerDefence extends ApplicationAdapter {
 
     private boolean worldInitialized = false;
 
+    private Array<Body> bodies;
+
 	@Override
 	public void create () {
         // Event handler init
@@ -79,7 +81,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, true);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
         gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
@@ -100,6 +102,8 @@ public class TowerDefence extends ApplicationAdapter {
 
         font = new BitmapFont();
         font.setColor(Color.RED);
+
+        this.bodies = new Array<Body>();
 	}
 
     private void loadAssets() {
@@ -165,7 +169,7 @@ public class TowerDefence extends ApplicationAdapter {
             }
 
             if (time - monsterSpawnTime > 1000) {
-                SpawnEntity(DynamicEntity.ID_ENEMY_NAZI, 4, 9);
+                SpawnEntity(DynamicMonster.ID_ENEMY_NAZI, 4, 9);
                 monsterSpawnTime = time;
             }
             // Fill map with cannon towers.
@@ -189,17 +193,16 @@ public class TowerDefence extends ApplicationAdapter {
             physicsWorld.doPhysicsStep(deltaTime);
 
             // Remove dead bodies from world
-            Array<Body> bodies = new Array<Body>();
+            bodies.clear();
             physicsWorld.world_.getBodies(bodies);
             for (Body b : bodies) {
-                DynamicEntity entity = (DynamicEntity) b.getUserData();
+                DynamicMonster entity = (DynamicMonster) b.getUserData();
                 if (entity != null && !entity.isAlive) {
                     physicsWorld.world_.destroyBody(entity.body);
                     entity.body.setUserData(null);
                     entity.body = null;
                 }
             }
-
 
             // Check for cursor status and reset mouse position if button released
             EventHandler.CursorStatus status = event.getCursorStatus().get(0);
@@ -217,7 +220,7 @@ public class TowerDefence extends ApplicationAdapter {
 	}
 
     private void SpawnEntity(int type, float x, float y) {
-        DynamicEntity entity = gameWorld.SpawnEntity(type, x, y);
+        DynamicMonster entity = gameWorld.SpawnEntity(type, x, y);
     }
 
     @Override

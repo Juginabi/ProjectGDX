@@ -1,15 +1,5 @@
 package com.juginabi.towerdefence.GameEntities.Projectiles;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
-import com.juginabi.towerdefence.GameWorld;
-import com.juginabi.towerdefence.TowerDefence;
-
 /**
  * Laser Class
  * @author Trenton Shaffer Initial working implementation.

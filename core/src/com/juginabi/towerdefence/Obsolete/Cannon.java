@@ -1,28 +1,5 @@
 package com.juginabi.towerdefence.Obsolete;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
-import com.juginabi.towerdefence.GameWorld;
-import com.juginabi.towerdefence.GameEntities.Projectiles.Laser;
-import com.juginabi.towerdefence.TowerDefence;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Created by Juginabi on 03.03.2015.
  */

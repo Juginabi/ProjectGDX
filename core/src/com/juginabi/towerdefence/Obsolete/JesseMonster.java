@@ -1,21 +1,5 @@
 package com.juginabi.towerdefence.Obsolete;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
-import com.juginabi.towerdefence.GameWorld;
-import com.juginabi.towerdefence.TowerDefence;
-
 /**
  * Created by Juginabi on 07.03.2015.
  */

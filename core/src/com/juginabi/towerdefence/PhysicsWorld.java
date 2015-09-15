@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.juginabi.towerdefence.GameEntities.DynamicEntity;
+import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 
 /**
  * Created by Jukka on 21.8.2015.
@@ -52,7 +52,7 @@ boolean debugRenderingEnabled_ = false;
         world_.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
+                DynamicMonster e = (DynamicMonster)contact.getFixtureA().getBody().getUserData();
                 if (e != null) {
                     if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
@@ -64,7 +64,7 @@ boolean debugRenderingEnabled_ = false;
                     }
 
                 } else {
-                    e = (DynamicEntity)contact.getFixtureB().getBody().getUserData();
+                    e = (DynamicMonster)contact.getFixtureB().getBody().getUserData();
                     if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_NAVIGATION) {
                         // This is heading sensor
                         e.setTarget((Vector2)contact.getFixtureB().getUserData());
@@ -79,7 +79,7 @@ boolean debugRenderingEnabled_ = false;
 
             @Override
             public void endContact(Contact contact) {
-                DynamicEntity e = (DynamicEntity)contact.getFixtureA().getBody().getUserData();
+                DynamicMonster e = (DynamicMonster)contact.getFixtureA().getBody().getUserData();
 
             }
 
