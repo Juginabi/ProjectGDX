@@ -73,8 +73,9 @@ public class GameWorld {
                 break;
             case GameEntity.ID_DEFENDER_TANK:
                 entity = new DynamicDefender(this, physicsWorld);
+                break;
             default:
-                Gdx.app.log(TAG, "Unable to create entity!");
+                Gdx.app.log(TAG, "Unable to create entity with id " + type);
         }
         if (entity != null) {
             switch (type) {

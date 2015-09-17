@@ -1,5 +1,6 @@
 package com.juginabi.towerdefence.GameEntities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -56,27 +57,27 @@ public class DynamicMonster extends GameEntity {
         this.isAlive = true;
         this.removeThisEntity = false;
         this.stateTime = 0f;
-        if (body == null) {
-            // First we create a body definition
-            BodyDef bodyDef = new BodyDef();
-            // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-            bodyDef.type = BodyDef.BodyType.DynamicBody;
-            // Set our body's starting position in the world
-            bodyDef.position.set(posX+0.5f, posY+0.5f);
-            // Create our body in the world using our body definition
-            body = physicsWorld.world_.createBody(bodyDef);
-            PolygonShape shape = new PolygonShape();
-            shape.setAsBox(0.3f, 0.4f);
-            FixtureDef fixture = new FixtureDef();
-            fixture.shape = shape;
-            fixture.density = 0.8f;
-            fixture.friction = 0.4f;
-            fixture.restitution = 0.6f;
-            fixture.filter.categoryBits = PhysicsWorld.ENTITY_ENEMY;
-            fixture.filter.maskBits = (short) (PhysicsWorld.SENSOR_NAVIGATION | PhysicsWorld.SENSOR_GOAL);
-            body.createFixture(fixture);
-            shape.dispose();
-        }
+
+        // First we create a body definition
+        BodyDef bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        // Set our body's starting position in the world
+        bodyDef.position.set(posX+0.5f, posY+0.5f);
+        // Create our body in the world using our body definition
+        body = physicsWorld.world_.createBody(bodyDef);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(0.3f, 0.4f);
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = 0.8f;
+        fixture.friction = 0.4f;
+        fixture.restitution = 0.6f;
+        fixture.filter.categoryBits = PhysicsWorld.ENTITY_ENEMY;
+        fixture.filter.maskBits = PhysicsWorld.SENSOR_NAVIGATION | PhysicsWorld.SENSOR_GOAL | PhysicsWorld.ENTITY_DEFENDER;
+        body.createFixture(fixture);
+        shape.dispose();
+
         body.setUserData(this);
         body.setLinearDamping(1.3f);
 

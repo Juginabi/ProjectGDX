@@ -1,6 +1,7 @@
 package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
@@ -20,16 +21,15 @@ public class DynamicDefender extends GameEntity {
     private static final String TAG = "DynamicDefender";
     private final GameWorld gameWorld;
     private final PhysicsWorld physicsWorld;
-    public int type;
 
-    // Physics body
-    public Body body;
     private Body targetBody;
 
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
-        super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
+        //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
+        super(new Texture(Gdx.files.internal("Graphics/tankRed_outline.png")));
         this.gameWorld = gameworld;
         this.physicsWorld = physicsWorld;
+        this.isAlive = true;
 
         //Create Body definition
         CollisionBoxLoader loader = new CollisionBoxLoader(Gdx.files.internal("Graphics/TowerDefenceCollisionBoxes"));
@@ -43,22 +43,25 @@ public class DynamicDefender extends GameEntity {
         fd.friction = 0.5f;
         fd.restitution = 0.3f;
         fd.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER;
-        fd.filter.maskBits = PhysicsWorld.ENTITY_ENEMY;
+        fd.filter.maskBits = PhysicsWorld.ENTITY_ENEMY | PhysicsWorld.ENTITY_DEFENDER;
 
         body = physicsWorld.world_.createBody(bd);
         body.setUserData(this);
-        Vector2 origin = loader.getOrigin("TankRed", 1);
+        Vector2 origin = loader.getOrigin("TankRed", 1).cpy();
         setOrigin(origin.x, origin.y);
 
-        loader.attachFixture(body, "TankRed", fd, 1);
-        this.setBounds(body.getPosition().x,body.getPosition().y,1,1);
+        loader.attachFixture(body, "TankRed", fd, 0.8f);
+        Gdx.app.log(TAG, "Body created for defender");
+        this.setBounds(body.getPosition().x, body.getPosition().y,0.8f,0.8f);
     }
 
     @Override
     public void Update(float tickMilliseconds) {
-        setX(body.getPosition().x);
-        setY(body.getPosition().y);
-        setRotation(MathUtils.radiansToDegrees * body.getAngle());
+        if (body != null) {
+            setX(body.getPosition().x);
+            setY(body.getPosition().y);
+            setRotation(MathUtils.radiansToDegrees * body.getAngle());
+        }
     }
 
     @Override

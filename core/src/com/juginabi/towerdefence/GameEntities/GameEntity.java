@@ -1,5 +1,6 @@
 package com.juginabi.towerdefence.GameEntities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -18,6 +19,10 @@ public abstract class GameEntity extends Sprite {
     public GameEntity(TextureRegion region) {
         super(region);
         this.typeId = typeId;
+    }
+
+    public GameEntity(Texture tex) {
+        super(tex);
     }
 
     public abstract void Update(float tick);
