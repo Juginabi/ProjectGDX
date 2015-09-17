@@ -3,9 +3,11 @@ package com.juginabi.towerdefence;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.juginabi.towerdefence.GameEntities.DynamicDefender;
 import com.juginabi.towerdefence.GameEntities.DynamicMonster;
-import com.juginabi.towerdefence.GameEntities.EntityInitializer;
+import com.juginabi.towerdefence.GameEntities.GameEntity;
+import com.juginabi.towerdefence.GameEntities.GameEntity;
+import com.juginabi.towerdefence.helpers.EntityInitializer;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
@@ -16,47 +18,44 @@ import java.util.Stack;
 public class GameWorld {
     private final static String TAG = "GameWorld";
     // Map for all the monster and tower entities
-    private Stack<DynamicMonster> activeList;
+    private Stack<GameEntity> activeList;
     // Pool of entities
-    private Stack<DynamicMonster> enemies;
-    // Entities marked for removal. Cleared after each frame.
-    Stack<DynamicMonster> deadStack;
-    // Graphics for entities
-    public TextureAtlas entityAtlas;
+    private Stack<GameEntity> enemies;
+    private Stack<GameEntity> friends;
     // Physics world
     PhysicsWorld physicsWorld;
 
     public GameWorld(PhysicsWorld physicsWorld) {
-        this.activeList = new Stack<DynamicMonster>();
-        this.enemies = new Stack<DynamicMonster>();
-        this.deadStack = new Stack<DynamicMonster>();
+        this.activeList = new Stack<GameEntity>();
+        this.enemies = new Stack<GameEntity>();
+        this.friends = new Stack<GameEntity>();
         this.physicsWorld = physicsWorld;
     }
 
     public void InitializeWorld() {
-        entityAtlas = TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class);
         int i = 0;
         while (i != 20) {
             EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
             //CreateEntity(TowerCannon);
-            CreateEntity(DynamicMonster.ID_ENEMY_NAZI, initializer);
+            CreateEntity(GameEntity.ID_ENEMY_NAZI, initializer);
+            CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
             ++i;
         }
     }
 
-    public DynamicMonster SpawnEntity(int type, float x, float y) {
+    public GameEntity SpawnEntity(int type, float x, float y) {
         // This is either enemy or defender
-        DynamicMonster entity = null;
+        GameEntity entity = null;
         try {
             switch (type) {
-                case DynamicMonster.ID_ENEMY_NAZI:
+                case GameEntity.ID_ENEMY_NAZI:
                     if (!enemies.isEmpty()) {
                         entity = enemies.pop();
                         entity.initialize(x,y);
                         activeList.push(entity);
                     }
                     break;
-                case DynamicMonster.ID_ENEMY_SPEARMAN:
+                case GameEntity.ID_ENEMY_SPEARMAN:
                     break;
             }
         } catch (EmptyStackException e) {
@@ -66,27 +65,32 @@ public class GameWorld {
         return entity;
     }
 
-    DynamicMonster CreateEntity(int type, EntityInitializer initializer) {
-        DynamicMonster entity = null;
+    void CreateEntity(int type, EntityInitializer initializer) {
+        GameEntity entity = null;
         switch (type) {
-            case DynamicMonster.ID_ENEMY_NAZI:
+            case GameEntity.ID_ENEMY_NAZI:
                 entity = new DynamicMonster(this, physicsWorld, initializer);
                 break;
+            case GameEntity.ID_DEFENDER_TANK:
+                entity = new DynamicDefender(this, physicsWorld);
             default:
                 Gdx.app.log(TAG, "Unable to create entity!");
         }
         if (entity != null) {
             switch (type) {
-                case DynamicMonster.ID_ENEMY_NAZI:
+                case GameEntity.ID_ENEMY_NAZI:
                     enemies.push(entity);
+                    break;
+                case GameEntity.ID_DEFENDER_TANK:
+                    friends.push(entity);
                     break;
             }
         }
-        return entity;
     }
 
     public void UpdateWorld(float tickMilliseconds) {
-        DynamicMonster entity = null;
+        GameEntity entity;
+        GameEntity defender;
         for (int i = activeList.size()-1; i >=0;) {
             entity = activeList.get(i);
             entity.Update(tickMilliseconds);
@@ -94,10 +98,19 @@ public class GameWorld {
                 enemies.push(activeList.remove(i));
             --i;
         }
+
+        for (int i = friends.size()-1; i >=0;) {
+            defender = friends.get(i);
+            defender.Update(tickMilliseconds);
+            --i;
+        }
     }
 
     public void DrawWorld(Batch batch) {
         for (int i = 0; i < activeList.size(); ++i)
             activeList.get(i).Draw(batch);
+
+        for (int i = 0; i < friends.size(); ++i)
+            friends.get(i).Draw(batch);
     }
 }

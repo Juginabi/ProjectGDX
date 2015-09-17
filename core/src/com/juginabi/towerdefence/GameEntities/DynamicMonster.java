@@ -2,7 +2,6 @@ package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -12,23 +11,20 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.PhysicsWorld;
+import com.juginabi.towerdefence.helpers.EntityInitializer;
 
 /**
  * Created by Jukka on 3.3.2015.
  */
-public class DynamicMonster extends Sprite {
-    private static final String TAG = "DynamicEntity";
+public class DynamicMonster extends GameEntity {
+    private static final String TAG = "DynamicMonster";
     private final GameWorld gameWorld;
     private final PhysicsWorld physicsWorld;
     private Vector2 target;
     public float velocity;
     public float hitpoints;
-    public int type;
-    public boolean isAlive;
     private long deathAnimationTime = 1000;
     public long timeOfDeath = 0;
-    public Body body;
-    public boolean removeThisEntity = false;
     private Vector2 headingImpulse;
 
     // Animations; down, up, left, right
@@ -41,6 +37,7 @@ public class DynamicMonster extends Sprite {
     private float stateTime = 0;
 
     public DynamicMonster(GameWorld gameWorld, PhysicsWorld physicsWorld, EntityInitializer initData) {
+        super(initData.idleFrames[0]);
         this.gameWorld = gameWorld;
         this.physicsWorld = physicsWorld;
         this.walkAnimations = initData.walkAnimations;
@@ -49,10 +46,12 @@ public class DynamicMonster extends Sprite {
         this.target = new Vector2(0, 0);
         this.hitpoints = initData.hitpoints;
         this.velocity = initData.velocity;
+        this.typeId = initData.id;
         this.currentFrame = idleFrames[0];
         this.headingImpulse = new Vector2(0,0);
     }
 
+    @Override
     public void initialize(float posX, float posY) {
         this.isAlive = true;
         this.removeThisEntity = false;
@@ -85,6 +84,7 @@ public class DynamicMonster extends Sprite {
         this.setOriginCenter();
     }
 
+    @Override
     public void Update(float tickMilliseconds) {
         stateTime += tickMilliseconds;
         if (isAlive) {
@@ -115,6 +115,7 @@ public class DynamicMonster extends Sprite {
         }
     }
 
+    @Override
     public void Draw(Batch batch) {
         this.setRegion(currentFrame);
         //Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
@@ -124,8 +125,4 @@ public class DynamicMonster extends Sprite {
     public void setTarget(Vector2 vec) {
         this.target = vec;
     }
-
-    public static final int
-            ID_ENEMY_NAZI = 1,
-            ID_ENEMY_SPEARMAN = 2;
 }

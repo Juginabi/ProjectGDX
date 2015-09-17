@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.juginabi.towerdefence.GameEntities.DynamicMonster;
+import com.juginabi.towerdefence.GameEntities.GameEntity;
 
 public class TowerDefence extends ApplicationAdapter {
     private BitmapFont font;
@@ -81,7 +82,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, true);
         gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
@@ -196,11 +197,13 @@ public class TowerDefence extends ApplicationAdapter {
             bodies.clear();
             physicsWorld.world_.getBodies(bodies);
             for (Body b : bodies) {
-                DynamicMonster entity = (DynamicMonster) b.getUserData();
-                if (entity != null && !entity.isAlive) {
-                    physicsWorld.world_.destroyBody(entity.body);
-                    entity.body.setUserData(null);
-                    entity.body = null;
+                GameEntity entity = (GameEntity) b.getUserData();
+                if (entity != null && !entity.isAlive) {;
+                    if (entity.body != null) {
+                        physicsWorld.world_.destroyBody(entity.body);
+                        entity.body.setUserData(null);
+                        entity.body = null;
+                    }
                 }
             }
 
@@ -220,7 +223,7 @@ public class TowerDefence extends ApplicationAdapter {
 	}
 
     private void SpawnEntity(int type, float x, float y) {
-        DynamicMonster entity = gameWorld.SpawnEntity(type, x, y);
+        gameWorld.SpawnEntity(type, x, y);
     }
 
     @Override

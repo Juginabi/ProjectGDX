@@ -1,4 +1,4 @@
-package com.juginabi.towerdefence.GameEntities;
+package com.juginabi.towerdefence.helpers;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;

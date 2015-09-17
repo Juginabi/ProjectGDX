@@ -1,4 +1,4 @@
-package com.juginabi.towerdefence.GameEntities.Projectiles;
+package com.juginabi.towerdefence.GameEntities;
 
 /**
  * Laser Class

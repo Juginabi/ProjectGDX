@@ -15,31 +15,30 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicMonster;
+import com.juginabi.towerdefence.GameEntities.GameEntity;
 
 /**
  * Created by Jukka on 21.8.2015.
  */
 public class PhysicsWorld {
     public static final String TAG = "PhysicsWorld";
-
-    public static short
-                        SENSOR_NAVIGATION = 0x0001,
-                        SENSOR_GOAL = 0x0002,
-                        ENTITY_ENEMY = 0x0004,
-                        ENTITY_DEFENDER = 0x0008;
     // PhysicsWorld
     public World world_;
-
     // Constants
     private int VELOCITY_ITERATIONS = 6;
     private int POSITION_ITERATIONS = 2;
     private float TIME_STEP = 0.008f;
-
     // Accumulator used in physics step
     private float accumulator_ = 0;
-
+    // Bit masks
+    public static final short
+            SENSOR_NAVIGATION = 0x0001,
+            SENSOR_GOAL = 0x0002,
+            ENTITY_ENEMY = 0x0004,
+            ENTITY_DEFENDER = 0x0008;
     // Debug renderer if any
     Box2DDebugRenderer debugRenderer_;
+
 boolean debugRenderingEnabled_ = false;
 
     public PhysicsWorld(Vector2 gravityVector, boolean sleepingObjects, boolean enableDebugRendering) {
@@ -52,34 +51,40 @@ boolean debugRenderingEnabled_ = false;
         world_.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                DynamicMonster e = (DynamicMonster)contact.getFixtureA().getBody().getUserData();
-                if (e != null) {
-                    if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_NAVIGATION) {
-                        // This is heading sensor
-                        e.setTarget((Vector2) contact.getFixtureB().getUserData());
-                    } else if (contact.getFixtureB().getFilterData().categoryBits == SENSOR_GOAL) {
-                        // This is finishline sensor
-                        e.timeOfDeath = TimeUtils.millis();
-                        e.isAlive = false;
-                    }
-
-                } else {
-                    e = (DynamicMonster)contact.getFixtureB().getBody().getUserData();
-                    if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_NAVIGATION) {
-                        // This is heading sensor
-                        e.setTarget((Vector2)contact.getFixtureB().getUserData());
-                    } else if (contact.getFixtureA().getFilterData().categoryBits == SENSOR_GOAL) {
-                        // This is finishline sensor
-                        e.isAlive = false;
-                        e.timeOfDeath = TimeUtils.millis();
-                    }
-
+                Fixture fixA = contact.getFixtureA();
+                Fixture fixB = contact.getFixtureB();
+                switch (fixA.getFilterData().categoryBits) {
+                    case SENSOR_NAVIGATION:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicMonster monster = (DynamicMonster)fixB.getBody().getUserData();
+                            Vector2 newTarget = (Vector2)fixA.getUserData();
+                            monster.setTarget(newTarget);
+                        }
+                        break;
+                    case SENSOR_GOAL:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicMonster monster = (DynamicMonster)fixB.getBody().getUserData();
+                            monster.timeOfDeath = TimeUtils.millis();
+                            monster.isAlive = false;
+                        }
+                        break;
+                    case ENTITY_ENEMY:
+                        DynamicMonster monster = (DynamicMonster)fixA.getBody().getUserData();
+                        if (fixB.getFilterData().categoryBits == SENSOR_NAVIGATION) {
+                            Vector2 newTarget = (Vector2)fixB.getUserData();
+                            monster.setTarget(newTarget);
+                        } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
+                            monster.timeOfDeath = TimeUtils.millis();
+                            monster.isAlive = false;
+                        }
+                        break;
+                    case ENTITY_DEFENDER:
+                        break;
                 }
             }
 
             @Override
             public void endContact(Contact contact) {
-                DynamicMonster e = (DynamicMonster)contact.getFixtureA().getBody().getUserData();
 
             }
 
@@ -132,24 +137,19 @@ boolean debugRenderingEnabled_ = false;
         bodyDef.type = BodyDef.BodyType.StaticBody;
         // Set our body's starting position in the world
         bodyDef.position.set(x, y);
-
         // Create our body in the world using our body definition
         Body body = world_.createBody(bodyDef);
-
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
         circle.setRadius(0.25f);
-
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
         fixtureDef.filter.categoryBits = SENSOR_NAVIGATION;
-
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);
         fix.setUserData(heading);
-
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
@@ -162,23 +162,18 @@ boolean debugRenderingEnabled_ = false;
         bodyDef.type = BodyDef.BodyType.StaticBody;
         // Set our body's starting position in the world
         bodyDef.position.set(x, y);
-
         // Create our body in the world using our body definition
         Body body = world_.createBody(bodyDef);
-
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
         circle.setRadius(0.25f);
-
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
         fixtureDef.filter.categoryBits = SENSOR_GOAL;
-
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);
-
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
