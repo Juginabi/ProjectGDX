@@ -1,5 +1,6 @@
 package com.juginabi.towerdefence;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.juginabi.towerdefence.GameEntities.DynamicDefender;
 import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 import com.juginabi.towerdefence.GameEntities.GameEntity;
 
@@ -76,16 +78,53 @@ boolean debugRenderingEnabled_ = false;
                         } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
                             monster.timeOfDeath = TimeUtils.millis();
                             monster.isAlive = false;
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER) {
+                            DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
+                            defender.addTarget(fixA.getBody());
                         }
                         break;
                     case ENTITY_DEFENDER:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
+                            defender.addTarget(fixB.getBody());
+                        }
                         break;
                 }
             }
 
             @Override
             public void endContact(Contact contact) {
+                Fixture fixA = contact.getFixtureA();
+                Fixture fixB = contact.getFixtureB();
+                switch (fixA.getFilterData().categoryBits) {
+                    case SENSOR_NAVIGATION:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
 
+                        }
+                        break;
+                    case SENSOR_GOAL:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+
+                        }
+                        break;
+                    case ENTITY_ENEMY:
+                        DynamicMonster monster = (DynamicMonster)fixA.getBody().getUserData();
+                        if (fixB.getFilterData().categoryBits == SENSOR_NAVIGATION) {
+
+                        } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
+
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER) {
+                            DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
+                            defender.removeBody(fixA.getBody());
+                        }
+                        break;
+                    case ENTITY_DEFENDER:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
+                            defender.removeBody(fixB.getBody());
+                        }
+                        break;
+                }
             }
 
             @Override

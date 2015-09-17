@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.juginabi.towerdefence.GameEntities.DynamicDefender;
 import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 import com.juginabi.towerdefence.GameEntities.GameEntity;
-import com.juginabi.towerdefence.GameEntities.GameEntity;
 import com.juginabi.towerdefence.helpers.EntityInitializer;
 
 import java.util.EmptyStackException;
@@ -38,9 +37,9 @@ public class GameWorld {
             EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
             //CreateEntity(TowerCannon);
             CreateEntity(GameEntity.ID_ENEMY_NAZI, initializer);
-            CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
             ++i;
         }
+        CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
     }
 
     public GameEntity SpawnEntity(int type, float x, float y) {
