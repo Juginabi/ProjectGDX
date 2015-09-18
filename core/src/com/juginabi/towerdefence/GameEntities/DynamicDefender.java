@@ -17,6 +17,8 @@ import com.juginabi.towerdefence.helpers.CollisionBoxLoader;
 
 import java.util.Stack;
 
+import sun.awt.SunGraphicsCallback;
+
 /**
  * Created by Jukka on 15.9.2015.
  */
@@ -39,32 +41,6 @@ public class DynamicDefender extends GameEntity {
         this.isAlive = true;
         this.lastFire = 0;
         this.allTargets = new Stack<Body>();
-
-        //Create Body definition
-        CollisionBoxLoader loader = new CollisionBoxLoader(Gdx.files.internal("Graphics/TowerDefenceCollisionBoxes"));
-
-        BodyDef bd = new BodyDef();
-        bd.position.set(7, 4);
-        bd.type = BodyDef.BodyType.StaticBody;
-
-        CircleShape circle = new CircleShape();
-        circle.setRadius(3f);
-
-        FixtureDef fd = new FixtureDef();
-        fd.isSensor = true;
-        fd.shape = circle;
-        fd.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER;
-        fd.filter.maskBits = PhysicsWorld.ENTITY_ENEMY;
-
-        body = physicsWorld.world_.createBody(bd);
-        Fixture fix = body.createFixture(fd);
-        body.setUserData(this);
-        Vector2 origin = loader.getOrigin("TankRed", 1).cpy();
-        setOrigin(origin.x, origin.y);
-
-        loader.attachFixture(body, "TankRed", fd, 0.8f);
-        Gdx.app.log(TAG, "Body created for defender");
-        this.setBounds(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2,0.8f,0.8f);
     }
 
     @Override
@@ -93,7 +69,34 @@ public class DynamicDefender extends GameEntity {
 
     @Override
     public void initialize(float x, float y) {
+        //Create Body definition
+        CollisionBoxLoader loader = new CollisionBoxLoader(Gdx.files.internal("Graphics/TowerDefenceCollisionBoxes"));
 
+        BodyDef bd = new BodyDef();
+        bd.position.set(x, y);
+        bd.type = BodyDef.BodyType.DynamicBody;
+
+        CircleShape circle = new CircleShape();
+        circle.setRadius(3f);
+
+        FixtureDef fd = new FixtureDef();
+        fd.isSensor = true;
+        fd.shape = circle;
+        fd.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER_SENSOR;
+        fd.filter.maskBits = PhysicsWorld.ENTITY_ENEMY;
+
+        body = physicsWorld.world_.createBody(bd);
+        body.createFixture(fd);
+        body.setUserData(this);
+        FixtureDef fd2 = new FixtureDef();
+        fd2.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER;
+        fd2.filter.maskBits = PhysicsWorld.ENTITY_DEFENDER | PhysicsWorld.ENTITY_ILLEGAL_BUILD_SPOT;
+        Vector2 origin = loader.getOrigin("TankRed", 1).cpy();
+        setOrigin(origin.x, origin.y);
+
+        loader.attachFixture(body, "TankRed", fd2, 0.8f);
+        Gdx.app.log(TAG, "Body created for defender");
+        this.setBounds(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2, 0.8f, 0.8f);
     }
 
     public void addTarget(Body body) {

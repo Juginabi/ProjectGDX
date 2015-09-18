@@ -35,11 +35,10 @@ public class GameWorld {
         int i = 0;
         while (i != 20) {
             EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
-            //CreateEntity(TowerCannon);
             CreateEntity(GameEntity.ID_ENEMY_NAZI, initializer);
+            CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
             ++i;
         }
-        CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
     }
 
     public GameEntity SpawnEntity(int type, float x, float y) {
@@ -55,6 +54,13 @@ public class GameWorld {
                     }
                     break;
                 case GameEntity.ID_ENEMY_SPEARMAN:
+                    break;
+                case GameEntity.ID_DEFENDER_TANK:
+                    if (!friends.isEmpty()) {
+                        entity = friends.pop();
+                        entity.initialize(x, y);
+                        activeList.push(entity);
+                    }
                     break;
             }
         } catch (EmptyStackException e) {
@@ -90,7 +96,6 @@ public class GameWorld {
 
     public void UpdateWorld(float tickMilliseconds) {
         GameEntity entity;
-        GameEntity defender;
         for (int i = activeList.size()-1; i >=0;) {
             entity = activeList.get(i);
             entity.Update(tickMilliseconds);
@@ -98,19 +103,10 @@ public class GameWorld {
                 enemies.push(activeList.remove(i));
             --i;
         }
-
-        for (int i = friends.size()-1; i >=0;) {
-            defender = friends.get(i);
-            defender.Update(tickMilliseconds);
-            --i;
-        }
     }
 
     public void DrawWorld(Batch batch) {
         for (int i = 0; i < activeList.size(); ++i)
             activeList.get(i).Draw(batch);
-
-        for (int i = 0; i < friends.size(); ++i)
-            friends.get(i).Draw(batch);
     }
 }

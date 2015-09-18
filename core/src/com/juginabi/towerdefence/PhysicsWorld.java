@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameEntities.DynamicDefender;
@@ -37,7 +38,9 @@ public class PhysicsWorld {
             SENSOR_NAVIGATION = 0x0001,
             SENSOR_GOAL = 0x0002,
             ENTITY_ENEMY = 0x0004,
-            ENTITY_DEFENDER = 0x0008;
+            ENTITY_DEFENDER = 0x0008,
+            ENTITY_DEFENDER_SENSOR = 0x0010,
+            ENTITY_ILLEGAL_BUILD_SPOT = 0x0020;
     // Debug renderer if any
     Box2DDebugRenderer debugRenderer_;
 
@@ -78,12 +81,12 @@ boolean debugRenderingEnabled_ = false;
                         } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
                             monster.timeOfDeath = TimeUtils.millis();
                             monster.isAlive = false;
-                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER) {
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SENSOR) {
                             DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
                             defender.addTarget(fixA.getBody());
                         }
                         break;
-                    case ENTITY_DEFENDER:
+                    case ENTITY_DEFENDER_SENSOR:
                         if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
                             DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
                             defender.addTarget(fixB.getBody());
@@ -113,12 +116,12 @@ boolean debugRenderingEnabled_ = false;
 
                         } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
 
-                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER) {
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SENSOR) {
                             DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
                             defender.removeBody(fixA.getBody());
                         }
                         break;
-                    case ENTITY_DEFENDER:
+                    case ENTITY_DEFENDER_SENSOR:
                         if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
                             DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
                             defender.removeBody(fixB.getBody());
@@ -141,7 +144,8 @@ boolean debugRenderingEnabled_ = false;
         createCheckpointSensor(4.5f, 9.5f, new Vector2(4.5f, 1.5f));
         createCheckpointSensor(4.5f, 1.5f, new Vector2(11.5f, 1.5f));
         createCheckpointSensor(11.5f,1.5f, new Vector2(11.5f,9.5f));
-        createFinishlineSensor(11.5f,9.5f);
+        createFinishlineSensor(11.5f, 9.5f);
+        createIllegalBuildArea();
     }
 
     public void setVelocityIterations(int iterations) {
@@ -169,6 +173,71 @@ boolean debugRenderingEnabled_ = false;
         }
     }
 
+    public void createIllegalBuildArea() {
+        // First we create a body definition
+        BodyDef bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        // Set our body's starting position in the world
+        bodyDef.position.set(4.5f, 5f);
+        // Create our body in the world using our body definition
+        Body body = world_.createBody(bodyDef);
+        // Create a circle shape and set its radius to 6
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(0.65f,4.2f);
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.filter.categoryBits = ENTITY_ILLEGAL_BUILD_SPOT;
+        // Create our fixture and attach it to the body
+        Fixture fix = body.createFixture(fixtureDef);
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        shape.dispose();
+
+        // First we create a body definition
+        BodyDef bodyDef2 = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef2.type = BodyDef.BodyType.StaticBody;
+        // Set our body's starting position in the world
+        bodyDef2.position.set(8f, 1.5f);
+        // Create our body in the world using our body definition
+        Body body2 = world_.createBody(bodyDef2);
+        // Create a circle shape and set its radius to 6
+        PolygonShape shape2 = new PolygonShape();
+        shape2.setAsBox(4.2f,0.65f);
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef2 = new FixtureDef();
+        fixtureDef2.shape = shape2;
+        fixtureDef2.filter.categoryBits = ENTITY_ILLEGAL_BUILD_SPOT;
+        // Create our fixture and attach it to the body
+        body2.createFixture(fixtureDef2);
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        shape2.dispose();
+
+        // First we create a body definition
+        BodyDef bodyDef3 = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef3.type = BodyDef.BodyType.StaticBody;
+        // Set our body's starting position in the world
+        bodyDef3.position.set(11.5f, 5f);
+        // Create our body in the world using our body definition
+        Body body3 = world_.createBody(bodyDef3);
+        // Create a circle shape and set its radius to 6
+        PolygonShape shape3 = new PolygonShape();
+        shape3.setAsBox(0.65f,4.2f);
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef3 = new FixtureDef();
+        fixtureDef3.shape = shape;
+        fixtureDef3.filter.categoryBits = ENTITY_ILLEGAL_BUILD_SPOT;
+        // Create our fixture and attach it to the body
+        body3.createFixture(fixtureDef3);
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        shape3.dispose();
+    }
+
     public void createCheckpointSensor(float x, float y, Vector2 heading) {
         // First we create a body definition
         BodyDef bodyDef = new BodyDef();
@@ -185,6 +254,7 @@ boolean debugRenderingEnabled_ = false;
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.isSensor = true;
+        fixtureDef.filter.maskBits = ENTITY_ENEMY;
         fixtureDef.filter.categoryBits = SENSOR_NAVIGATION;
         // Create our fixture and attach it to the body
         Fixture fix = body.createFixture(fixtureDef);

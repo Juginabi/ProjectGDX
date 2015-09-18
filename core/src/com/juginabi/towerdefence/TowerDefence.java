@@ -4,12 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -28,7 +26,6 @@ import com.juginabi.towerdefence.GameEntities.DynamicMonster;
 import com.juginabi.towerdefence.GameEntities.GameEntity;
 
 public class TowerDefence extends ApplicationAdapter {
-    private BitmapFont font;
 
     // Tag of this app
     private static String TAG = "TowerDefence";
@@ -82,7 +79,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, true);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
         gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
@@ -100,9 +97,6 @@ public class TowerDefence extends ApplicationAdapter {
         OBJECTIVE_LAYER = (TiledMapTileLayer) map.getLayers().get("OBJECTIVE_LAYER");
 
         monsterSpawnTime = TimeUtils.millis();
-
-        font = new BitmapFont();
-        font.setColor(Color.RED);
 
         this.bodies = new Array<Body>();
 	}
@@ -129,25 +123,17 @@ public class TowerDefence extends ApplicationAdapter {
             xx = Gdx.input.getX();
             yy = Gdx.input.getY();
 
-            int x = (int)intersectPos.x ;
-            int y = (int)intersectPos.y;
+            float x = intersectPos.x ;
+            float y = intersectPos.y;
 
             Gdx.app.log(TAG, "Intersection at location (" + x + ", " + y + ")");
-            TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell(x, y);
-            /*if (cell != null) {
+            TiledMapTileLayer.Cell cell = BUILD_LAYER.getCell((int)x, (int)y);
+            if (cell != null) {
                 Gdx.app.log(TAG, "Something here!");
             }
             else {
-                DynamicEntity cannon = world.SpawnEntity(GameWorld.TowerCannon, x, y);
-                if (cannon != null) {
-                    // Entity succesfully created
-                    cannon.initialize(x, y);
-                    //cannon.setPosition(x * TILE_WIDTH, y * TILE_HEIGHT);
-                    //cannon.SetStatusAlive(true);
-                    //if (manager.isLoaded("Audio/threeTone2.ogg", Sound.class))
-                    //    manager.get("Audio/threeTone2.ogg", Sound.class).play();
-                }
-            }*/
+                gameWorld.SpawnEntity(GameEntity.ID_DEFENDER_TANK, x,y);
+            }
         }
     }
 
