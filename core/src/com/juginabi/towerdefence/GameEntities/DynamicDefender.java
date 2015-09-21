@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.PhysicsWorld;
@@ -33,6 +34,8 @@ public class DynamicDefender extends GameEntity {
     private long reload = 60;
     private long lastFire;
 
+    private Body barrelBody;
+
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
         //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
         super(new Texture(Gdx.files.internal("Graphics/tankRed_outline.png")));
@@ -47,7 +50,7 @@ public class DynamicDefender extends GameEntity {
     public void Update(float tickMilliseconds) {
         long time = TimeUtils.millis();
         if (body != null) {
-            setX(body.getPosition().x - getWidth()/2);
+            setX(body.getPosition().x - getWidth() / 2);
             setY(body.getPosition().y - getHeight()/2);
             setRotation(MathUtils.radiansToDegrees * body.getAngle());
         }
@@ -95,7 +98,25 @@ public class DynamicDefender extends GameEntity {
         setOrigin(origin.x, origin.y);
 
         loader.attachFixture(body, "TankRed", fd2, 0.8f);
-        this.setBounds(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, 0.8f, 0.8f*this.getHeight()/this.getWidth());
+        this.setBounds(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, 0.8f, 0.8f * this.getHeight() / this.getWidth());
+
+        BodyDef barrelDef = new BodyDef();
+        barrelDef.position.set(body.getPosition());
+        barrelDef.type = BodyDef.BodyType.DynamicBody;
+
+        FixtureDef barrelFix = new FixtureDef();
+        barrelBody = physicsWorld.world_.createBody(barrelDef);
+        loader.attachFixture(barrelBody, "BarrelRed", barrelFix, 0.2f);
+        RevoluteJointDef joint = new RevoluteJointDef();
+        joint.bodyA = body;
+        joint.bodyB = barrelBody;
+        joint.localAnchorA.set(0,0);
+        joint.localAnchorB.set(0,0);
+        joint.enableMotor = true;
+        joint.maxMotorTorque = 200;
+        joint.e
+        joint.motorSpeed = 360 * MathUtils.degreesToRadians;
+        physicsWorld.world_.createJoint(joint);
     }
 
     public void addTarget(Body body) {
