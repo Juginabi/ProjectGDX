@@ -95,8 +95,7 @@ public class DynamicDefender extends GameEntity {
         setOrigin(origin.x, origin.y);
 
         loader.attachFixture(body, "TankRed", fd2, 0.8f);
-        Gdx.app.log(TAG, "Body created for defender");
-        this.setBounds(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2, 0.8f, 0.8f);
+        this.setBounds(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, 0.8f, 0.8f*this.getHeight()/this.getWidth());
     }
 
     public void addTarget(Body body) {
