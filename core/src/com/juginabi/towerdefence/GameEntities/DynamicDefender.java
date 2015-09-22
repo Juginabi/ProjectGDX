@@ -3,6 +3,7 @@ package com.juginabi.towerdefence.GameEntities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
@@ -35,10 +38,14 @@ public class DynamicDefender extends GameEntity {
     private long lastFire;
 
     private Body barrelBody;
+    private RevoluteJoint joint;
+
+    Sprite barrel;
 
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
         //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
         super(new Texture(Gdx.files.internal("Graphics/tankRed_outline.png")));
+        barrel = new Sprite(new Texture(Gdx.files.internal("Graphics/barrelRed_outline.png")));
         this.gameWorld = gameworld;
         this.physicsWorld = physicsWorld;
         this.isAlive = true;
@@ -55,6 +62,12 @@ public class DynamicDefender extends GameEntity {
             setRotation(MathUtils.radiansToDegrees * body.getAngle());
         }
 
+        if (barrelBody != null) {
+            barrel.setX(barrelBody.getPosition().x - barrel.getWidth() / 2);
+            barrel.setY(barrelBody.getPosition().y - barrel.getOriginY());
+            barrel.setRotation(MathUtils.radiansToDegrees * barrelBody.getAngle());
+        }
+
         if (targetBody == null && !allTargets.isEmpty()) {
             targetBody = allTargets.get(0);
         }
@@ -63,11 +76,14 @@ public class DynamicDefender extends GameEntity {
             Fire();
             lastFire = time;
         }
+
+        Gdx.app.log(TAG, "Joint angle: " + joint.getJointAngle() * MathUtils.radiansToDegrees);
     }
 
     @Override
     public void Draw(Batch batch) {
         super.draw(batch);
+        barrel.draw(batch);
     }
 
     @Override
@@ -77,7 +93,7 @@ public class DynamicDefender extends GameEntity {
 
         BodyDef bd = new BodyDef();
         bd.position.set(x, y);
-        bd.type = BodyDef.BodyType.DynamicBody;
+        bd.type = BodyDef.BodyType.StaticBody;
 
         CircleShape circle = new CircleShape();
         circle.setRadius(3f);
@@ -92,6 +108,8 @@ public class DynamicDefender extends GameEntity {
         body.createFixture(fd);
         body.setUserData(this);
         FixtureDef fd2 = new FixtureDef();
+        fd2.density = 5f;
+        fd2.friction = 2f;
         fd2.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER;
         fd2.filter.maskBits = PhysicsWorld.ENTITY_DEFENDER | PhysicsWorld.ENTITY_ILLEGAL_BUILD_SPOT;
         Vector2 origin = loader.getOrigin("TankRed", 1).cpy();
@@ -105,18 +123,23 @@ public class DynamicDefender extends GameEntity {
         barrelDef.type = BodyDef.BodyType.DynamicBody;
 
         FixtureDef barrelFix = new FixtureDef();
+        barrelFix.friction = 0.1f;
+        barrelFix.density = 0.05f;
         barrelBody = physicsWorld.world_.createBody(barrelDef);
+        origin = loader.getOrigin("BarrelRed",0.2f).cpy();
+        barrel.setOrigin(origin.x, origin.y);
         loader.attachFixture(barrelBody, "BarrelRed", barrelFix, 0.2f);
+        barrel.setBounds(barrelBody.getPosition().x - barrel.getWidth() / 2, barrelBody.getPosition().y - barrel.getHeight() / 2, 0.2f, 0.2f * barrel.getHeight() / barrel.getWidth());
         RevoluteJointDef joint = new RevoluteJointDef();
         joint.bodyA = body;
         joint.bodyB = barrelBody;
         joint.localAnchorA.set(0,0);
         joint.localAnchorB.set(0,0);
         joint.enableMotor = true;
-        joint.maxMotorTorque = 200;
-        joint.e
-        joint.motorSpeed = 360 * MathUtils.degreesToRadians;
-        physicsWorld.world_.createJoint(joint);
+        joint.collideConnected = false;
+        joint.maxMotorTorque = 20;
+        joint.motorSpeed = 90 * MathUtils.degreesToRadians;
+        this.joint = (RevoluteJoint) physicsWorld.world_.createJoint(joint);
     }
 
     public void addTarget(Body body) {

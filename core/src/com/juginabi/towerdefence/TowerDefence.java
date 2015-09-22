@@ -79,7 +79,7 @@ public class TowerDefence extends ApplicationAdapter {
         loadAssets();
 
         // Gameworld which handles all dynamic entities in it
-        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, true);
+        physicsWorld = new PhysicsWorld(new Vector2(0, 0), true, false);
         gameWorld = new GameWorld(physicsWorld);
 
         // Lets create camera
