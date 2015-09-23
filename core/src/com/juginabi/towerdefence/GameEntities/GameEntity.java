@@ -3,6 +3,7 @@ package com.juginabi.towerdefence.GameEntities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 
@@ -18,10 +19,9 @@ public abstract class GameEntity extends Sprite {
 
     public GameEntity(TextureRegion region) {
         super(region);
-        this.typeId = typeId;
     }
 
-    public GameEntity(Texture tex) {
+    public GameEntity(TextureAtlas.AtlasRegion tex) {
         super(tex);
     }
 

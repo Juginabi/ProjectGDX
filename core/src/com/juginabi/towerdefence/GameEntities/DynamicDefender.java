@@ -1,10 +1,12 @@
 package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.PhysicsWorld;
+import com.juginabi.towerdefence.TowerDefence;
 import com.juginabi.towerdefence.helpers.CollisionBoxLoader;
 
 import java.util.Random;
@@ -44,8 +47,9 @@ public class DynamicDefender extends GameEntity {
 
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
         //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
-        super(new Texture(Gdx.files.internal("Graphics/tankRed_outline.png")));
-        barrel = new Sprite(new Texture(Gdx.files.internal("Graphics/barrelRed_outline.png")));
+        super(TowerDefence.getAssetManager().get("Graphics/tankAtlas.txt", TextureAtlas.class).findRegion("tankRed_outline"));
+        AssetManager manager = TowerDefence.getAssetManager();
+        barrel = new Sprite(TowerDefence.getAssetManager().get("Graphics/tankAtlas.txt", TextureAtlas.class).findRegion("barrelRed_outline"));
         this.gameWorld = gameworld;
         this.physicsWorld = physicsWorld;
         this.isAlive = true;
@@ -100,7 +104,6 @@ public class DynamicDefender extends GameEntity {
         if (currentLaser != null) {
             currentLaser.setDegrees(barrel.getRotation());
             if (!currentLaser.Update(tickMilliseconds)) {
-                Gdx.app.log(TAG, "Setting laser null!");
                 currentLaser = null;
             }
         }
@@ -196,9 +199,9 @@ public class DynamicDefender extends GameEntity {
 
         if (currentLaser == null) {
             currentLaser = new Laser(barrelBody.getPosition().x, barrelBody.getPosition().y);
-            currentLaser.setLifeTime(reload/2000f);
-            currentLaser.setBeamColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255/255f));
-            currentLaser.setRayColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255/255f));
+            currentLaser.setLifeTime(reload / 2000f);
+            currentLaser.setBeamColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255 / 255f));
+            currentLaser.setRayColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255 / 255f));
             currentLaser.setDistance(2);
         }
 

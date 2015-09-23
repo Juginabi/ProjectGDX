@@ -1,4 +1,4 @@
-tankatlas.atlas.png
+tankAtlas.atlas.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none

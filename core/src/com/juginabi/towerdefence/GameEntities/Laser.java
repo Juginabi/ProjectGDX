@@ -2,10 +2,12 @@ package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.juginabi.towerdefence.TowerDefence;
 
 /**
  * Laser Class
@@ -29,7 +31,7 @@ public class Laser {
 
     public Laser(float x, float y) {
 
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Graphics/laseratlas.atlas.txt"));
+        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/laserAtlas.txt", TextureAtlas.class);
         this.begin1 = new Sprite(atlas.findRegion("beamstart1"));
         this.begin2 = new Sprite(atlas.findRegion("beamstart2"));
         this.mid1 = new Sprite(atlas.findRegion("beammid1"));
