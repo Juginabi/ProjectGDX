@@ -1,0 +1,158 @@
+tankatlas.atlas
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+barrelGreen
+  rotate: false
+  xy: 0, 0
+  size: 16, 50
+  orig: 16, 50
+  offset: 0, 0
+  index: -1
+barrelBlue
+  rotate: false
+  xy: 16, 0
+  size: 16, 50
+  orig: 16, 50
+  offset: 0, 0
+  index: -1
+barrelRed
+  rotate: false
+  xy: 32, 0
+  size: 16, 50
+  orig: 16, 50
+  offset: 0, 0
+  index: -1
+barrelBeige
+  rotate: false
+  xy: 48, 0
+  size: 16, 50
+  orig: 16, 50
+  offset: 0, 0
+  index: -1
+barrelBlack
+  rotate: false
+  xy: 64, 0
+  size: 16, 50
+  orig: 16, 50
+  offset: 0, 0
+  index: -1
+barrelGreen_outline
+  rotate: false
+  xy: 80, 0
+  size: 24, 58
+  orig: 24, 58
+  offset: 0, 0
+  index: -1
+barrelRed_outline
+  rotate: false
+  xy: 104, 0
+  size: 24, 58
+  orig: 24, 58
+  offset: 0, 0
+  index: -1
+barrelBlack_outline
+  rotate: false
+  xy: 128, 0
+  size: 24, 58
+  orig: 24, 58
+  offset: 0, 0
+  index: -1
+barrelBlue_outline
+  rotate: false
+  xy: 152, 0
+  size: 24, 58
+  orig: 24, 58
+  offset: 0, 0
+  index: -1
+barrelBeige_outline
+  rotate: false
+  xy: 176, 0
+  size: 24, 58
+  orig: 24, 58
+  offset: 0, 0
+  index: -1
+tankBlue
+  rotate: false
+  xy: 200, 0
+  size: 75, 70
+  orig: 75, 70
+  offset: 0, 0
+  index: -1
+tankRed
+  rotate: false
+  xy: 275, 0
+  size: 75, 70
+  orig: 75, 70
+  offset: 0, 0
+  index: -1
+tankBlack
+  rotate: false
+  xy: 0, 70
+  size: 75, 70
+  orig: 75, 70
+  offset: 0, 0
+  index: -1
+tankGreen
+  rotate: false
+  xy: 75, 70
+  size: 75, 70
+  orig: 75, 70
+  offset: 0, 0
+  index: -1
+tankBeige
+  rotate: false
+  xy: 150, 70
+  size: 75, 70
+  orig: 75, 70
+  offset: 0, 0
+  index: -1
+tankGreen_outline
+  rotate: false
+  xy: 225, 70
+  size: 83, 78
+  orig: 83, 78
+  offset: 0, 0
+  index: -1
+tankRed_outline
+  rotate: false
+  xy: 308, 70
+  size: 83, 78
+  orig: 83, 78
+  offset: 0, 0
+  index: -1
+tankBeige_outline
+  rotate: false
+  xy: 0, 148
+  size: 83, 78
+  orig: 83, 78
+  offset: 0, 0
+  index: -1
+tankBlue_outline
+  rotate: false
+  xy: 83, 148
+  size: 83, 78
+  orig: 83, 78
+  offset: 0, 0
+  index: -1
+tankBlack_outline
+  rotate: false
+  xy: 166, 148
+  size: 83, 78
+  orig: 83, 78
+  offset: 0, 0
+  index: -1
+tracksLarge
+  rotate: false
+  xy: 249, 148
+  size: 82, 104
+  orig: 82, 104
+  offset: 0, 0
+  index: -1
+tracksSmall
+  rotate: false
+  xy: 331, 148
+  size: 74, 104
+  orig: 74, 104
+  offset: 0, 0
+  index: -1

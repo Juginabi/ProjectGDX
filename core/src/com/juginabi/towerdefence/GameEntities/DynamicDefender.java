@@ -1,6 +1,7 @@
 package com.juginabi.towerdefence.GameEntities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -9,9 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -19,9 +18,8 @@ import com.juginabi.towerdefence.GameWorld;
 import com.juginabi.towerdefence.PhysicsWorld;
 import com.juginabi.towerdefence.helpers.CollisionBoxLoader;
 
+import java.util.Random;
 import java.util.Stack;
-
-import sun.awt.SunGraphicsCallback;
 
 /**
  * Created by Jukka on 15.9.2015.
@@ -34,13 +32,15 @@ public class DynamicDefender extends GameEntity {
     public Stack<Body> allTargets;
     public Body targetBody;
 
-    private long reload = 60;
+    private long reload = 500;
     private long lastFire;
 
     private Body barrelBody;
     private RevoluteJoint joint;
 
     Sprite barrel;
+
+    Laser currentLaser;
 
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
         //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
@@ -68,6 +68,8 @@ public class DynamicDefender extends GameEntity {
             barrel.setRotation(MathUtils.radiansToDegrees * barrelBody.getAngle());
         }
 
+
+
         if (targetBody == null && !allTargets.isEmpty()) {
             targetBody = allTargets.get(0);
         }
@@ -77,12 +79,39 @@ public class DynamicDefender extends GameEntity {
             lastFire = time;
         }
 
-        Gdx.app.log(TAG, "Joint angle: " + joint.getJointAngle() * MathUtils.radiansToDegrees);
+        // Check angle to target
+        if (targetBody != null) {
+            float bodyAngle = barrelBody.getAngle();
+            Vector2 toTarget = targetBody.getPosition().sub(barrelBody.getPosition());
+            float desiredAngle = MathUtils.atan2(-toTarget.x, toTarget.y);
+            if (desiredAngle > bodyAngle) {
+                joint.setMotorSpeed(90 * MathUtils.degreesToRadians);
+                joint.enableMotor(true);
+            } else if (desiredAngle < bodyAngle) {
+                joint.setMotorSpeed(-90 * MathUtils.degreesToRadians);
+                joint.enableMotor(true);
+            } else {
+                joint.setMotorSpeed(0);
+            }
+        } else {
+            joint.setMotorSpeed(0);
+        }
+
+        if (currentLaser != null) {
+            currentLaser.setDegrees(barrel.getRotation());
+            if (!currentLaser.Update(tickMilliseconds)) {
+                Gdx.app.log(TAG, "Setting laser null!");
+                currentLaser = null;
+            }
+        }
     }
 
     @Override
     public void Draw(Batch batch) {
         super.draw(batch);
+        if (currentLaser != null) {
+            currentLaser.Draw(batch);
+        }
         barrel.draw(batch);
     }
 
@@ -125,6 +154,8 @@ public class DynamicDefender extends GameEntity {
         FixtureDef barrelFix = new FixtureDef();
         barrelFix.friction = 0.1f;
         barrelFix.density = 0.05f;
+        barrelFix.filter.categoryBits = PhysicsWorld.ENTITY_DEFENDER;
+        barrelFix.filter.maskBits = PhysicsWorld.ENTITY_ENEMY;
         barrelBody = physicsWorld.world_.createBody(barrelDef);
         origin = loader.getOrigin("BarrelRed",0.2f).cpy();
         barrel.setOrigin(origin.x, origin.y);
@@ -135,7 +166,7 @@ public class DynamicDefender extends GameEntity {
         joint.bodyB = barrelBody;
         joint.localAnchorA.set(0,0);
         joint.localAnchorB.set(0,0);
-        joint.enableMotor = true;
+        joint.enableMotor = false;
         joint.collideConnected = false;
         joint.maxMotorTorque = 20;
         joint.motorSpeed = 90 * MathUtils.degreesToRadians;
@@ -160,5 +191,16 @@ public class DynamicDefender extends GameEntity {
         Vector2 targetPos = targetBody.getPosition();
         Vector2 impulseDir = new Vector2(targetPos.x - myPos.x, targetPos.y - myPos.y);
         targetBody.applyForce(impulseDir, targetBody.getWorldCenter(), true);
+        DynamicMonster monster = (DynamicMonster)targetBody.getUserData();
+        monster.hitpoints -= 2;
+
+        if (currentLaser == null) {
+            currentLaser = new Laser(barrelBody.getPosition().x, barrelBody.getPosition().y);
+            currentLaser.setLifeTime(reload/2000f);
+            currentLaser.setBeamColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255/255f));
+            currentLaser.setRayColor(new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 255/255f));
+            currentLaser.setDistance(2);
+        }
+
     }
 }

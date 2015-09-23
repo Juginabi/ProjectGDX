@@ -1,11 +1,9 @@
 package com.juginabi.towerdefence.GameEntities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -57,6 +55,7 @@ public class DynamicMonster extends GameEntity {
         this.isAlive = true;
         this.removeThisEntity = false;
         this.stateTime = 0f;
+        this.hitpoints = 50;
 
         // First we create a body definition
         BodyDef bodyDef = new BodyDef();
@@ -87,6 +86,10 @@ public class DynamicMonster extends GameEntity {
 
     @Override
     public void Update(float tickMilliseconds) {
+        if (hitpoints <= 0 && isAlive) {
+            isAlive = false;
+            timeOfDeath = TimeUtils.millis();
+        }
         stateTime += tickMilliseconds;
         if (isAlive) {
             Vector2 linear = body.getLinearVelocity();
