@@ -90,12 +90,21 @@ public class DynamicDefender extends GameEntity {
             float bodyAngle = barrelBody.getAngle();
             Vector2 toTarget = spottedTarget.getPosition().sub(barrelBody.getPosition());
             float desiredAngle = MathUtils.atan2(-toTarget.x, toTarget.y);
+            float totalRotation = desiredAngle - bodyAngle;
+            while ( totalRotation < -180 * MathUtils.degreesToRadians ) totalRotation += 360 * MathUtils.degreesToRadians;
+            while ( totalRotation >  180 * MathUtils.degreesToRadians ) totalRotation -= 360 * MathUtils.degreesToRadians;
             Gdx.app.log(TAG, "Desired: " + desiredAngle*MathUtils.radiansToDegrees + ", body: " + bodyAngle*MathUtils.radiansToDegrees);
-            if (desiredAngle > bodyAngle) {
-                joint.setMotorSpeed(90 * MathUtils.degreesToRadians);
+            if (totalRotation > 0) {
+                if (totalRotation > (25 * MathUtils.degreesToRadians))
+                    joint.setMotorSpeed(180 * MathUtils.degreesToRadians);
+                else
+                    joint.setMotorSpeed(25 * MathUtils.degreesToRadians);
                 joint.enableMotor(true);
-            } else if (desiredAngle < bodyAngle) {
-                joint.setMotorSpeed(-90 * MathUtils.degreesToRadians);
+            } else if (totalRotation < 0) {
+                if (totalRotation < (-25 * MathUtils.degreesToRadians))
+                    joint.setMotorSpeed(-180 * MathUtils.degreesToRadians);
+                else
+                    joint.setMotorSpeed(-25 * MathUtils.degreesToRadians);
                 joint.enableMotor(true);
             } else {
                 joint.setMotorSpeed(0);
