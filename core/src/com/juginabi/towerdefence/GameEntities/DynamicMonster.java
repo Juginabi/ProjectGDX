@@ -73,7 +73,7 @@ public class DynamicMonster extends GameEntity {
         fixture.friction = 0.4f;
         fixture.restitution = 0.6f;
         fixture.filter.categoryBits = PhysicsWorld.ENTITY_ENEMY;
-        fixture.filter.maskBits = PhysicsWorld.SENSOR_NAVIGATION | PhysicsWorld.SENSOR_GOAL | PhysicsWorld.ENTITY_DEFENDER_SENSOR;
+        fixture.filter.maskBits = PhysicsWorld.SENSOR_NAVIGATION | PhysicsWorld.SENSOR_GOAL | PhysicsWorld.ENTITY_DEFENDER_SPOTTING_SENSOR | PhysicsWorld.ENTITY_DEFENDER_FIRE_SENSOR;
         body.createFixture(fixture);
         shape.dispose();
 

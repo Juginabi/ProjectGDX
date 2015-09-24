@@ -39,8 +39,9 @@ public class PhysicsWorld {
             SENSOR_GOAL = 0x0002,
             ENTITY_ENEMY = 0x0004,
             ENTITY_DEFENDER = 0x0008,
-            ENTITY_DEFENDER_SENSOR = 0x0010,
-            ENTITY_ILLEGAL_BUILD_SPOT = 0x0020;
+            ENTITY_DEFENDER_SPOTTING_SENSOR = 0x0010,
+            ENTITY_DEFENDER_FIRE_SENSOR = 0x0020,
+            ENTITY_ILLEGAL_BUILD_SPOT = 0x0040;
     // Debug renderer if any
     Box2DDebugRenderer debugRenderer_;
 
@@ -81,17 +82,25 @@ boolean debugRenderingEnabled_ = false;
                         } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
                             monster.timeOfDeath = TimeUtils.millis();
                             monster.isAlive = false;
-                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SENSOR) {
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SPOTTING_SENSOR) {
                             DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
-                            defender.addTarget(fixA.getBody());
+                            defender.EnemyEnteredSpotRange(fixA.getBody());
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_FIRE_SENSOR) {
+                            DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
+                            defender.EnemyEnteredFireRange(fixA.getBody());
                         }
                         break;
-                    case ENTITY_DEFENDER_SENSOR:
+                    case ENTITY_DEFENDER_SPOTTING_SENSOR:
                         if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
                             DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
-                            defender.addTarget(fixB.getBody());
+                            defender.EnemyEnteredSpotRange(fixB.getBody());
                         }
                         break;
+                    case ENTITY_DEFENDER_FIRE_SENSOR:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
+                            defender.EnemyEnteredFireRange(fixB.getBody());
+                        }
                 }
             }
 
@@ -116,15 +125,23 @@ boolean debugRenderingEnabled_ = false;
 
                         } else if (fixB.getFilterData().categoryBits == SENSOR_GOAL) {
 
-                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SENSOR) {
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_SPOTTING_SENSOR) {
                             DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
-                            defender.removeBody(fixA.getBody());
+                            defender.EnemyExitedSpotRange(fixA.getBody());
+                        } else if (fixB.getFilterData().categoryBits == ENTITY_DEFENDER_FIRE_SENSOR) {
+                            DynamicDefender defender = (DynamicDefender) fixB.getBody().getUserData();
+                            defender.EnemyExitedFireRange(fixA.getBody());
                         }
                         break;
-                    case ENTITY_DEFENDER_SENSOR:
+                    case ENTITY_DEFENDER_SPOTTING_SENSOR:
                         if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
                             DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
-                            defender.removeBody(fixB.getBody());
+                            defender.EnemyExitedSpotRange(fixB.getBody());
+                        }
+                    case ENTITY_DEFENDER_FIRE_SENSOR:
+                        if (fixB.getFilterData().categoryBits == ENTITY_ENEMY) {
+                            DynamicDefender defender = (DynamicDefender) fixA.getBody().getUserData();
+                            defender.EnemyExitedFireRange(fixB.getBody());
                         }
                         break;
                 }
