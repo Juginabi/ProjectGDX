@@ -103,8 +103,8 @@ public class TowerDefence extends ApplicationAdapter {
 
     private void loadAssets() {
         // Texture assets
-        manager.load("Graphics/laserAtlas.txt", TextureAtlas.class);
-        manager.load("Graphics/tankAtlas.txt", TextureAtlas.class);
+        manager.load("Graphics/laseratlas.txt", TextureAtlas.class);
+        manager.load("Graphics/tankatlas.txt", TextureAtlas.class);
         // Audio assets
         FileHandle[] files = Gdx.files.internal("Audio").list();
         for (FileHandle fi : files)

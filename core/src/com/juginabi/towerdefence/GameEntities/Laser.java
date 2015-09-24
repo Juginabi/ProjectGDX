@@ -31,7 +31,7 @@ public class Laser {
 
     public Laser(float x, float y) {
 
-        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/laserAtlas.txt", TextureAtlas.class);
+        TextureAtlas atlas = TowerDefence.getAssetManager().get("Graphics/laseratlas.txt", TextureAtlas.class);
         this.begin1 = new Sprite(atlas.findRegion("beamstart1"));
         this.begin2 = new Sprite(atlas.findRegion("beamstart2"));
         this.mid1 = new Sprite(atlas.findRegion("beammid1"));

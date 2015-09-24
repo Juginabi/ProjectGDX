@@ -1,4 +1,4 @@
-laserAtlas.png
+laseratlas.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none

@@ -48,9 +48,9 @@ public class DynamicDefender extends GameEntity {
 
     public DynamicDefender(GameWorld gameworld, PhysicsWorld physicsWorld) {
         //super(TowerDefence.getAssetManager().get("Graphics/EntityAtlas.txt", TextureAtlas.class).findRegion("tankBlack"));
-        super(TowerDefence.getAssetManager().get("Graphics/tankAtlas.txt", TextureAtlas.class).findRegion("tankRed_outline"));
+        super(TowerDefence.getAssetManager().get("Graphics/tankatlas.txt", TextureAtlas.class).findRegion("tankRed_outline"));
         AssetManager manager = TowerDefence.getAssetManager();
-        barrel = new Sprite(TowerDefence.getAssetManager().get("Graphics/tankAtlas.txt", TextureAtlas.class).findRegion("barrelRed_outline"));
+        barrel = new Sprite(TowerDefence.getAssetManager().get("Graphics/tankatlas.txt", TextureAtlas.class).findRegion("barrelRed_outline"));
         this.gameWorld = gameworld;
         this.physicsWorld = physicsWorld;
         this.isAlive = true;
@@ -93,7 +93,6 @@ public class DynamicDefender extends GameEntity {
             float totalRotation = desiredAngle - bodyAngle;
             while ( totalRotation < -180 * MathUtils.degreesToRadians ) totalRotation += 360 * MathUtils.degreesToRadians;
             while ( totalRotation >  180 * MathUtils.degreesToRadians ) totalRotation -= 360 * MathUtils.degreesToRadians;
-            Gdx.app.log(TAG, "Desired: " + desiredAngle*MathUtils.radiansToDegrees + ", body: " + bodyAngle*MathUtils.radiansToDegrees);
             if (totalRotation > 0) {
                 if (totalRotation > (25 * MathUtils.degreesToRadians))
                     joint.setMotorSpeed(180 * MathUtils.degreesToRadians);
