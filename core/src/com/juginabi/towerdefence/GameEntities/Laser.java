@@ -71,17 +71,13 @@ public class Laser {
         end1.setColor(beamColor);
         end2.setColor(rayColor);
 
-        // Scale mid-sprites according to distance. This is the length of laser.
-        /*mid1.setSize(mid1.getWidth(), distance);
-        mid2.setSize(mid1.getWidth(), distance);*/
-
         // Rotation correctly around begin1 origin
-        begin1.setOrigin(begin1.getWidth() / 2, begin1.getHeight() / 2);
-        begin2.setOrigin(begin1.getWidth() / 2, begin1.getHeight() / 2);
-        mid1.setOrigin(mid1.getWidth() / 2, -begin1.getHeight() / 2);
-        mid2.setOrigin(mid2.getWidth() / 2, -begin1.getHeight() / 2);
-        end1.setOrigin(mid1.getWidth() / 2, -begin1.getHeight() / 2 - mid1.getHeight());
-        end2.setOrigin(mid2.getWidth() / 2, -begin1.getHeight() / 2 - mid2.getHeight());
+        begin1.setOrigin(begin1.getWidth() / 2, begin1.getHeight() / 2 - 0.4f);
+        begin2.setOrigin(begin1.getWidth() / 2, begin1.getHeight() / 2 - 0.4f);
+        mid1.setOrigin(mid1.getWidth() / 2, -begin1.getHeight() / 2 - 0.4f);
+        mid2.setOrigin(mid2.getWidth() / 2, -begin1.getHeight() / 2 - 0.4f);
+        end1.setOrigin(mid1.getWidth() / 2, -begin1.getHeight() / 2 - mid1.getHeight() - 0.4f);
+        end2.setOrigin(mid2.getWidth() / 2, -begin1.getHeight() / 2 - mid2.getHeight() - 0.4f);
 
         // Set absolute rotation value
         begin1.setRotation(degrees);
@@ -93,8 +89,8 @@ public class Laser {
 
         float laserSize = 1f;
         // Stack up sprites and make laser complete
-        begin1.setBounds(position.x - begin1.getWidth() / 2, position.y - begin1.getHeight() / 2, laserSize, laserSize);
-        begin2.setBounds(position.x - begin2.getWidth() / 2, position.y - begin2.getHeight() / 2, laserSize, laserSize);
+        begin1.setBounds(position.x - begin1.getWidth() / 2, position.y - begin1.getHeight() / 2 + 0.4f, laserSize, laserSize);
+        begin2.setBounds(position.x - begin2.getWidth() / 2, position.y - begin2.getHeight() / 2 + 0.4f, laserSize, laserSize);
         mid1.setBounds(begin1.getX(), begin1.getY() + begin1.getHeight(), laserSize, distance);
         mid2.setBounds(begin2.getX(), begin2.getY() + begin2.getHeight(), laserSize, distance);
         end1.setBounds(begin1.getX(), begin1.getY() + begin1.getHeight() + mid1.getHeight(), laserSize, laserSize);

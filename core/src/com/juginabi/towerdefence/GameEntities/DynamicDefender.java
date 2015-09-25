@@ -94,16 +94,16 @@ public class DynamicDefender extends GameEntity {
             while ( totalRotation < -180 * MathUtils.degreesToRadians ) totalRotation += 360 * MathUtils.degreesToRadians;
             while ( totalRotation >  180 * MathUtils.degreesToRadians ) totalRotation -= 360 * MathUtils.degreesToRadians;
             if (totalRotation > 0) {
-                if (totalRotation > (25 * MathUtils.degreesToRadians))
+                if (totalRotation > (15 * MathUtils.degreesToRadians))
                     joint.setMotorSpeed(180 * MathUtils.degreesToRadians);
                 else
-                    joint.setMotorSpeed(25 * MathUtils.degreesToRadians);
+                    joint.setMotorSpeed(35 * MathUtils.degreesToRadians);
                 joint.enableMotor(true);
             } else if (totalRotation < 0) {
-                if (totalRotation < (-25 * MathUtils.degreesToRadians))
+                if (totalRotation < (-15 * MathUtils.degreesToRadians))
                     joint.setMotorSpeed(-180 * MathUtils.degreesToRadians);
                 else
-                    joint.setMotorSpeed(-25 * MathUtils.degreesToRadians);
+                    joint.setMotorSpeed(-35 * MathUtils.degreesToRadians);
                 joint.enableMotor(true);
             } else {
                 joint.setMotorSpeed(0);
@@ -123,10 +123,10 @@ public class DynamicDefender extends GameEntity {
     @Override
     public void Draw(Batch batch) {
         super.draw(batch);
+        barrel.draw(batch);
         if (currentLaser != null) {
             currentLaser.Draw(batch);
         }
-        barrel.draw(batch);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class DynamicDefender extends GameEntity {
         Vector2[] vertices = new Vector2[8];
         vertices[0] = new Vector2(0,0);
         float radius = 3;
-        float desiredAngle = 20; // degrees
+        float desiredAngle = 15; // degrees
         for (int i = 0; i < 7; i++) {
             float angle = (float) (i / 6.0 * desiredAngle * MathUtils.degreesToRadians) + ((90-desiredAngle/2) * MathUtils.degreesToRadians);
             vertices[i+1] = new Vector2(radius * MathUtils.cos(angle), radius * MathUtils.sin(angle));

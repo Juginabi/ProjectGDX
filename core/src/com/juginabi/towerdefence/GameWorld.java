@@ -37,6 +37,7 @@ public class GameWorld {
             EntityInitializer initializer = new EntityInitializer(TowerDefence.getAssetManager().get("Graphics/topdown-nazi.png", Texture.class), Gdx.files.internal("MonsterData/monsters.xml"), 1, 1);
             CreateEntity(GameEntity.ID_ENEMY_NAZI, initializer);
             CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
+            CreateEntity(GameEntity.ID_DEFENDER_TANK, null);
             ++i;
         }
     }
