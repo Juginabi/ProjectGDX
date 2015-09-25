@@ -236,7 +236,6 @@ public class DynamicDefender extends GameEntity {
     }
 
     public void EnemyEnteredFireRange(Body enemy) {
-        Gdx.app.log(TAG, "Enemy entered fire range!");
         targetsInRange.push(enemy);
     }
 
