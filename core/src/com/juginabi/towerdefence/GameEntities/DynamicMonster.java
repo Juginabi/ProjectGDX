@@ -1,5 +1,6 @@
 package com.juginabi.towerdefence.GameEntities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -120,10 +121,13 @@ public class DynamicMonster extends GameEntity {
     }
 
     @Override
-    public void Draw(Batch batch) {
+    public void Draw(Batch batch, short stage) {
         this.setRegion(currentFrame);
-        //Gdx.app.log(TAG, "Drawing dynamic entity: " + getX() + ", " + getY());
-        super.draw(batch);
+        switch (stage) {
+            case 1:
+                super.draw(batch);
+                break;
+        }
     }
 
     public void setTarget(Vector2 vec) {

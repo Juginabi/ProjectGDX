@@ -121,11 +121,17 @@ public class DynamicDefender extends GameEntity {
     }
 
     @Override
-    public void Draw(Batch batch) {
-        super.draw(batch);
-        barrel.draw(batch);
-        if (currentLaser != null) {
-            currentLaser.Draw(batch);
+    public void Draw(Batch batch, short stage) {
+        switch (stage) {
+            case 1:
+                super.draw(batch);
+                barrel.draw(batch);
+                break;
+            case 2:
+                if (currentLaser != null) {
+                    currentLaser.Draw(batch);
+                }
+                break;
         }
     }
 

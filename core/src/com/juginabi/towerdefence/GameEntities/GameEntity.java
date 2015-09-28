@@ -27,7 +27,7 @@ public abstract class GameEntity extends Sprite {
 
     public abstract void Update(float tick);
 
-    public abstract void Draw(Batch batch);
+    public abstract void Draw(Batch batch, short stage);
 
     public abstract void initialize(float x, float y);
 

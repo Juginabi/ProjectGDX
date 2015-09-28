@@ -108,6 +108,8 @@ public class GameWorld {
 
     public void DrawWorld(Batch batch) {
         for (int i = 0; i < activeList.size(); ++i)
-            activeList.get(i).Draw(batch);
+            activeList.get(i).Draw(batch, (short) 1);
+        for (int i = 0; i < activeList.size(); ++i)
+            activeList.get(i).Draw(batch, (short) 2);
     }
 }
